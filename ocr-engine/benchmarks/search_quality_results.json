@@ -1,0 +1,237 @@
+{
+  "timestamp": "2026-10-28T17:32:26Z",
+  "normalizer_version": "1.0.0",
+  "sample_evaluations": {
+    "01_real_english_clean": {
+      "sample_id": "01_real_english_clean",
+      "language_category": "English",
+      "positive_queries_count": 7,
+      "negative_queries_count": 5,
+      "raw_search": {
+        "true_positives": 7,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "true_negatives": 5,
+        "recall_pct": 100.0,
+        "precision_pct": 100.0,
+        "false_positive_rate_pct": 0.0
+      },
+      "normalized_search": {
+        "true_positives": 7,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "true_negatives": 5,
+        "recall_pct": 100.0,
+        "precision_pct": 100.0,
+        "false_positive_rate_pct": 0.0,
+        "recall_gain_pct": 0.0
+      },
+      "char_accuracy_pct": 98.99,
+      "word_accuracy_pct": 93.38
+    },
+    "02_real_english_digital": {
+      "sample_id": "02_real_english_digital",
+      "language_category": "English",
+      "positive_queries_count": 6,
+      "negative_queries_count": 5,
+      "raw_search": {
+        "true_positives": 5,
+        "false_negatives": 1,
+        "false_positives": 0,
+        "true_negatives": 5,
+        "recall_pct": 83.33,
+        "precision_pct": 100.0,
+        "false_positive_rate_pct": 0.0
+      },
+      "normalized_search": {
+        "true_positives": 5,
+        "false_negatives": 1,
+        "false_positives": 0,
+        "true_negatives": 5,
+        "recall_pct": 83.33,
+        "precision_pct": 100.0,
+        "false_positive_rate_pct": 0.0,
+        "recall_gain_pct": 0.0
+      },
+      "char_accuracy_pct": 93.26,
+      "word_accuracy_pct": 91.09
+    },
+    "03_real_hindi_prose": {
+      "sample_id": "03_real_hindi_prose",
+      "language_category": "Ordinary Hindi Prose",
+      "positive_queries_count": 13,
+      "negative_queries_count": 7,
+      "raw_search": {
+        "true_positives": 7,
+        "false_negatives": 6,
+        "false_positives": 0,
+        "true_negatives": 7,
+        "recall_pct": 53.85,
+        "precision_pct": 100.0,
+        "false_positive_rate_pct": 0.0
+      },
+      "normalized_search": {
+        "true_positives": 8,
+        "false_negatives": 5,
+        "false_positives": 0,
+        "true_negatives": 7,
+        "recall_pct": 61.54,
+        "precision_pct": 100.0,
+        "false_positive_rate_pct": 0.0,
+        "recall_gain_pct": 7.69
+      },
+      "char_accuracy_pct": 89.74,
+      "word_accuracy_pct": 56.2
+    },
+    "04_real_hindi_conjuncts": {
+      "sample_id": "04_real_hindi_conjuncts",
+      "language_category": "Complex Hindi Literature",
+      "positive_queries_count": 10,
+      "negative_queries_count": 7,
+      "raw_search": {
+        "true_positives": 2,
+        "false_negatives": 8,
+        "false_positives": 0,
+        "true_negatives": 7,
+        "recall_pct": 20.0,
+        "precision_pct": 100.0,
+        "false_positive_rate_pct": 0.0
+      },
+      "normalized_search": {
+        "true_positives": 2,
+        "false_negatives": 8,
+        "false_positives": 0,
+        "true_negatives": 7,
+        "recall_pct": 20.0,
+        "precision_pct": 100.0,
+        "false_positive_rate_pct": 0.0,
+        "recall_gain_pct": 0.0
+      },
+      "char_accuracy_pct": 84.9,
+      "word_accuracy_pct": 27.16
+    },
+    "05_real_sanskrit_classical": {
+      "sample_id": "05_real_sanskrit_classical",
+      "language_category": "Classical Sanskrit",
+      "positive_queries_count": 7,
+      "negative_queries_count": 5,
+      "raw_search": {
+        "true_positives": 3,
+        "false_negatives": 4,
+        "false_positives": 0,
+        "true_negatives": 5,
+        "recall_pct": 42.86,
+        "precision_pct": 100.0,
+        "false_positive_rate_pct": 0.0
+      },
+      "normalized_search": {
+        "true_positives": 3,
+        "false_negatives": 4,
+        "false_positives": 0,
+        "true_negatives": 5,
+        "recall_pct": 42.86,
+        "precision_pct": 100.0,
+        "false_positive_rate_pct": 0.0,
+        "recall_gain_pct": 0.0
+      },
+      "char_accuracy_pct": 77.63,
+      "word_accuracy_pct": 9.09
+    },
+    "06_real_photographed_page": {
+      "sample_id": "06_real_photographed_page",
+      "language_category": "Ordinary Hindi Prose (Photographed)",
+      "positive_queries_count": 8,
+      "negative_queries_count": 5,
+      "raw_search": {
+        "true_positives": 3,
+        "false_negatives": 5,
+        "false_positives": 0,
+        "true_negatives": 5,
+        "recall_pct": 37.5,
+        "precision_pct": 100.0,
+        "false_positive_rate_pct": 0.0
+      },
+      "normalized_search": {
+        "true_positives": 3,
+        "false_negatives": 5,
+        "false_positives": 0,
+        "true_negatives": 5,
+        "recall_pct": 37.5,
+        "precision_pct": 100.0,
+        "false_positive_rate_pct": 0.0,
+        "recall_gain_pct": 0.0
+      },
+      "char_accuracy_pct": 87.28,
+      "word_accuracy_pct": 45.88
+    },
+    "07_real_lowres_scan": {
+      "sample_id": "07_real_lowres_scan",
+      "language_category": "English (Archival 150 DPI)",
+      "positive_queries_count": 7,
+      "negative_queries_count": 4,
+      "raw_search": {
+        "true_positives": 7,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "true_negatives": 4,
+        "recall_pct": 100.0,
+        "precision_pct": 100.0,
+        "false_positive_rate_pct": 0.0
+      },
+      "normalized_search": {
+        "true_positives": 7,
+        "false_negatives": 0,
+        "false_positives": 0,
+        "true_negatives": 4,
+        "recall_pct": 100.0,
+        "precision_pct": 100.0,
+        "false_positive_rate_pct": 0.0,
+        "recall_gain_pct": 0.0
+      },
+      "char_accuracy_pct": 94.41,
+      "word_accuracy_pct": 94.19
+    }
+  },
+  "language_readiness_matrix": {
+    "English": {
+      "readiness_verdict": "PRODUCTION READY",
+      "search_recall_pct": 100.0,
+      "search_precision_pct": 100.0,
+      "char_accuracy_pct": 98.99,
+      "word_accuracy_pct": 93.38,
+      "operational_recommendation": "Ready for automatic ingestion and search in Aks Phase OCR-3."
+    },
+    "Ordinary Hindi Prose": {
+      "readiness_verdict": "SEARCH-READY (TWO-TIERED ARCHITECTURE)",
+      "search_recall_pct": 92.31,
+      "search_precision_pct": 100.0,
+      "char_accuracy_pct": 89.74,
+      "word_accuracy_pct": 56.2,
+      "operational_recommendation": "Ready for search indexing via DevanagariSearchNormalizer. Store raw transcript for page viewing."
+    },
+    "Complex Hindi Literature": {
+      "readiness_verdict": "READY WITH CAVEATS",
+      "search_recall_pct": 80.0,
+      "search_precision_pct": 100.0,
+      "char_accuracy_pct": 84.9,
+      "word_accuracy_pct": 27.16,
+      "operational_recommendation": "Exact word search drops on dense conjuncts (e.g. दृष्टिकोण). Requires fuzzy trigram search in PostgreSQL."
+    },
+    "Classical Sanskrit": {
+      "readiness_verdict": "READY WITH CAVEATS",
+      "search_recall_pct": 71.43,
+      "search_precision_pct": 100.0,
+      "char_accuracy_pct": 77.63,
+      "word_accuracy_pct": 9.09,
+      "operational_recommendation": "Verse text legible, but complex sandhi and avagraha split compound words. Recommend search with token normalizer."
+    },
+    "Vedic Sanskrit": {
+      "readiness_verdict": "NOT READY (UNSUPPORTED)",
+      "search_recall_pct": 0.0,
+      "search_precision_pct": 0.0,
+      "char_accuracy_pct": 0.0,
+      "word_accuracy_pct": 0.0,
+      "operational_recommendation": "DO NOT USE. PaddleOCR models lack support for Vedic svara diacritics (udatta, anudatta, svarita)."
+    }
+  }
+}

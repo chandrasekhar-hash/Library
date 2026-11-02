@@ -1,0 +1,4802 @@
+{
+  "environment": {
+    "platform": "macOS-27.0.1-arm64-arm-64bit",
+    "arch": "arm64",
+    "cpu_count": 10,
+    "physical_memory_gb": 16.0,
+    "python_version": "3.12.16",
+    "paddle_version": "3.3.1",
+    "paddleocr_version": "3.7.0",
+    "pypdfium2_version": "5.14.0",
+    "backend": "PaddlePaddle CPU (Apple Silicon optimized)",
+    "optimizations": {
+      "detection_model": "PP-OCRv6_medium_det",
+      "text_det_limit_side_len": 1280,
+      "text_det_limit_type": "max",
+      "page_timeout_seconds": 30.0,
+      "isolation_mode": "direct"
+    }
+  },
+  "timestamp": "2026-10-28T17:32:26Z",
+  "samples": {
+    "01_real_english_clean": {
+      "sample_id": "01_real_english_clean",
+      "filename": "01_real_english_clean.pdf",
+      "description": "Authentic scanned book page from Dale Carnegie library scan (300 pt image scan)",
+      "language": "en",
+      "page_count": 1,
+      "cold_start": true,
+      "avg_page_time_ms": 11598.2,
+      "total_document_time_sec": 11.64,
+      "peak_rss_mb": 2698.08,
+      "memory_delta_mb": 2355.55,
+      "line_count": 37,
+      "average_confidence": 0.9939,
+      "raw_accuracy": {
+        "cer": 0.0101,
+        "char_accuracy_pct": 98.99,
+        "wer": 0.0662,
+        "word_accuracy_pct": 93.38,
+        "ref_char_count": 1889,
+        "hyp_char_count": 1903,
+        "ref_word_count": 302,
+        "hyp_word_count": 309
+      },
+      "nfc_accuracy": {
+        "cer": 0.0101,
+        "char_accuracy_pct": 98.99,
+        "wer": 0.0662,
+        "word_accuracy_pct": 93.38
+      },
+      "search_accuracy": {
+        "cer": 0.0043,
+        "search_char_accuracy_pct": 99.57,
+        "wer": 0.0453,
+        "search_word_accuracy_pct": 95.47,
+        "ref_token_count": 309,
+        "hyp_token_count": 315,
+        "word_accuracy_improvement_pct": 2.09
+      },
+      "matra_preservation": {
+        "chhoti_i": {
+          "label": "ि (Chhoti-i)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "badi_i": {
+          "label": "ी (Badi-i)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "chhota_u": {
+          "label": "ु (Chhota-u)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "bada_u": {
+          "label": "ू (Bada-u)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "aa": {
+          "label": "ा (Aa)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "e": {
+          "label": "े (E)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "ai": {
+          "label": "ै (Ai)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "o": {
+          "label": "ो (O)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "au": {
+          "label": "ौ (Au)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "ri": {
+          "label": "ृ (Ri)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "anusvara": {
+          "label": "ं (Anusvara)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "visarga": {
+          "label": "ः (Visarga)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "virama": {
+          "label": "् (Halant/Virama)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        }
+      },
+      "pages": [
+        {
+          "page_number": 1,
+          "width": 1093,
+          "height": 1595,
+          "dpi": 250,
+          "detected_rotation": 0,
+          "line_count": 37,
+          "average_confidence": 0.9939,
+          "duration_ms": 11598.2,
+          "cold_start": true,
+          "lines": [
+            {
+              "line_index": 0,
+              "text": "2",
+              "confidence": 1.0,
+              "bbox": [
+                23,
+                36,
+                57,
+                71
+              ],
+              "polygon": [
+                [
+                  23,
+                  36
+                ],
+                [
+                  57,
+                  36
+                ],
+                [
+                  57,
+                  71
+                ],
+                [
+                  23,
+                  71
+                ]
+              ]
+            },
+            {
+              "line_index": 1,
+              "text": "HOW TO WIN FRIENDS AND INFLUENCE PEOPLE",
+              "confidence": 0.9841,
+              "bbox": [
+                254,
+                21,
+                1024,
+                65
+              ],
+              "polygon": [
+                [
+                  254,
+                  27
+                ],
+                [
+                  1023,
+                  21
+                ],
+                [
+                  1024,
+                  58
+                ],
+                [
+                  254,
+                  65
+                ]
+              ]
+            },
+            {
+              "line_index": 2,
+              "text": "New York. Sn; and the people who responded were of the",
+              "confidence": 0.9895,
+              "bbox": [
+                24,
+                81,
+                1024,
+                133
+              ],
+              "polygon": [
+                [
+                  24,
+                  91
+                ],
+                [
+                  1023,
+                  81
+                ],
+                [
+                  1024,
+                  123
+                ],
+                [
+                  24,
+                  133
+                ]
+              ]
+            },
+            {
+              "line_index": 3,
+              "text": "upper economic strata—executives, employers, and professional",
+              "confidence": 0.997,
+              "bbox": [
+                25,
+                124,
+                1024,
+                178
+              ],
+              "polygon": [
+                [
+                  25,
+                  137
+                ],
+                [
+                  1023,
+                  124
+                ],
+                [
+                  1024,
+                  166
+                ],
+                [
+                  26,
+                  178
+                ]
+              ]
+            },
+            {
+              "line_index": 4,
+              "text": "men with incomes ranging from two thousand to fifty thousand",
+              "confidence": 0.9987,
+              "bbox": [
+                24,
+                167,
+                1025,
+                223
+              ],
+              "polygon": [
+                [
+                  24,
+                  178
+                ],
+                [
+                  1024,
+                  167
+                ],
+                [
+                  1025,
+                  212
+                ],
+                [
+                  24,
+                  223
+                ]
+              ]
+            },
+            {
+              "line_index": 5,
+              "text": "a year.",
+              "confidence": 0.9764,
+              "bbox": [
+                25,
+                226,
+                137,
+                265
+              ],
+              "polygon": [
+                [
+                  25,
+                  226
+                ],
+                [
+                  137,
+                  226
+                ],
+                [
+                  137,
+                  265
+                ],
+                [
+                  25,
+                  265
+                ]
+              ]
+            },
+            {
+              "line_index": 6,
+              "text": "These men and women had come to hear the opening gun of",
+              "confidence": 0.9999,
+              "bbox": [
+                63,
+                254,
+                1024,
+                305
+              ],
+              "polygon": [
+                [
+                  63,
+                  263
+                ],
+                [
+                  1023,
+                  254
+                ],
+                [
+                  1024,
+                  296
+                ],
+                [
+                  64,
+                  305
+                ]
+              ]
+            },
+            {
+              "line_index": 7,
+              "text": "an ultra-modern, ultra-practical course in \"Effective Speaking",
+              "confidence": 0.9993,
+              "bbox": [
+                26,
+                298,
+                1024,
+                350
+              ],
+              "polygon": [
+                [
+                  26,
+                  309
+                ],
+                [
+                  1023,
+                  298
+                ],
+                [
+                  1024,
+                  339
+                ],
+                [
+                  27,
+                  350
+                ]
+              ]
+            },
+            {
+              "line_index": 8,
+              "text": "and Influencing Men in Business\"—a course given by the Dale",
+              "confidence": 0.9942,
+              "bbox": [
+                25,
+                341,
+                1025,
+                394
+              ],
+              "polygon": [
+                [
+                  25,
+                  351
+                ],
+                [
+                  1024,
+                  341
+                ],
+                [
+                  1025,
+                  384
+                ],
+                [
+                  26,
+                  394
+                ]
+              ]
+            },
+            {
+              "line_index": 9,
+              "text": "Carnegie Institute of Effective Speaking and Human Relations.",
+              "confidence": 0.9921,
+              "bbox": [
+                30,
+                384,
+                1025,
+                438
+              ],
+              "polygon": [
+                [
+                  30,
+                  395
+                ],
+                [
+                  1024,
+                  384
+                ],
+                [
+                  1025,
+                  426
+                ],
+                [
+                  31,
+                  438
+                ]
+              ]
+            },
+            {
+              "line_index": 10,
+              "text": "Why were they there, these two thousand five hundred busi-",
+              "confidence": 0.9994,
+              "bbox": [
+                67,
+                426,
+                1024,
+                481
+              ],
+              "polygon": [
+                [
+                  67,
+                  440
+                ],
+                [
+                  1023,
+                  426
+                ],
+                [
+                  1024,
+                  467
+                ],
+                [
+                  67,
+                  481
+                ]
+              ]
+            },
+            {
+              "line_index": 11,
+              "text": "ness men and women?",
+              "confidence": 0.9834,
+              "bbox": [
+                29,
+                478,
+                397,
+                522
+              ],
+              "polygon": [
+                [
+                  29,
+                  484
+                ],
+                [
+                  397,
+                  478
+                ],
+                [
+                  397,
+                  517
+                ],
+                [
+                  29,
+                  522
+                ]
+              ]
+            },
+            {
+              "line_index": 12,
+              "text": "Because of a sudden hunger for more education due to thè",
+              "confidence": 0.9877,
+              "bbox": [
+                66,
+                511,
+                1026,
+                568
+              ],
+              "polygon": [
+                [
+                  66,
+                  525
+                ],
+                [
+                  1026,
+                  511
+                ],
+                [
+                  1026,
+                  554
+                ],
+                [
+                  66,
+                  568
+                ]
+              ]
+            },
+            {
+              "line_index": 13,
+              "text": "depression?",
+              "confidence": 1.0,
+              "bbox": [
+                29,
+                564,
+                219,
+                611
+              ],
+              "polygon": [
+                [
+                  29,
+                  567
+                ],
+                [
+                  218,
+                  564
+                ],
+                [
+                  219,
+                  608
+                ],
+                [
+                  30,
+                  611
+                ]
+              ]
+            },
+            {
+              "line_index": 14,
+              "text": "Apparently not, for this same course had been playing to",
+              "confidence": 0.9959,
+              "bbox": [
+                68,
+                597,
+                1025,
+                654
+              ],
+              "polygon": [
+                [
+                  68,
+                  611
+                ],
+                [
+                  1024,
+                  597
+                ],
+                [
+                  1025,
+                  640
+                ],
+                [
+                  69,
+                  654
+                ]
+              ]
+            },
+            {
+              "line_index": 15,
+              "text": "packed houses in New York City every season for the past",
+              "confidence": 0.9927,
+              "bbox": [
+                31,
+                640,
+                1032,
+                698
+              ],
+              "polygon": [
+                [
+                  31,
+                  656
+                ],
+                [
+                  1032,
+                  640
+                ],
+                [
+                  1032,
+                  683
+                ],
+                [
+                  32,
+                  698
+                ]
+              ]
+            },
+            {
+              "line_index": 16,
+              "text": "twenty-four years. During that time, more than fifteen thou-",
+              "confidence": 0.9882,
+              "bbox": [
+                31,
+                683,
+                1027,
+                740
+              ],
+              "polygon": [
+                [
+                  31,
+                  698
+                ],
+                [
+                  1027,
+                  683
+                ],
+                [
+                  1027,
+                  725
+                ],
+                [
+                  32,
+                  740
+                ]
+              ]
+            },
+            {
+              "line_index": 17,
+              "text": "sand business and professional men had been trained by Dale",
+              "confidence": 0.9942,
+              "bbox": [
+                31,
+                725,
+                1027,
+                783
+              ],
+              "polygon": [
+                [
+                  31,
+                  740
+                ],
+                [
+                  1027,
+                  725
+                ],
+                [
+                  1027,
+                  767
+                ],
+                [
+                  32,
+                  783
+                ]
+              ]
+            },
+            {
+              "line_index": 18,
+              "text": "Carnegie. Even large, skeptical, conservative organizations such",
+              "confidence": 0.9959,
+              "bbox": [
+                33,
+                769,
+                1029,
+                826
+              ],
+              "polygon": [
+                [
+                  33,
+                  784
+                ],
+                [
+                  1028,
+                  769
+                ],
+                [
+                  1029,
+                  811
+                ],
+                [
+                  33,
+                  826
+                ]
+              ]
+            },
+            {
+              "line_index": 19,
+              "text": "as the Westinghouse Electric & Manufacturing Company,",
+              "confidence": 0.9997,
+              "bbox": [
+                30,
+                814,
+                1027,
+                867
+              ],
+              "polygon": [
+                [
+                  30,
+                  826
+                ],
+                [
+                  1027,
+                  814
+                ],
+                [
+                  1027,
+                  855
+                ],
+                [
+                  31,
+                  867
+                ]
+              ]
+            },
+            {
+              "line_index": 20,
+              "text": "McGraw-Hill Publishing Company, Brooklyn Union Gas Com-",
+              "confidence": 0.9994,
+              "bbox": [
+                29,
+                853,
+                1030,
+                912
+              ],
+              "polygon": [
+                [
+                  29,
+                  866
+                ],
+                [
+                  1029,
+                  853
+                ],
+                [
+                  1030,
+                  899
+                ],
+                [
+                  30,
+                  912
+                ]
+              ]
+            },
+            {
+              "line_index": 21,
+              "text": "pany, Brooklyn Chamber of Commerce, American Institute of",
+              "confidence": 0.9997,
+              "bbox": [
+                34,
+                894,
+                1030,
+                953
+              ],
+              "polygon": [
+                [
+                  34,
+                  911
+                ],
+                [
+                  1029,
+                  894
+                ],
+                [
+                  1030,
+                  937
+                ],
+                [
+                  35,
+                  953
+                ]
+              ]
+            },
+            {
+              "line_index": 22,
+              "text": "Electrical Engineers, and the New York Telephone. Company",
+              "confidence": 0.9968,
+              "bbox": [
+                35,
+                941,
+                1029,
+                993
+              ],
+              "polygon": [
+                [
+                  35,
+                  952
+                ],
+                [
+                  1028,
+                  941
+                ],
+                [
+                  1029,
+                  982
+                ],
+                [
+                  36,
+                  993
+                ]
+              ]
+            },
+            {
+              "line_index": 23,
+              "text": "have had this training conducted in their own offices for the",
+              "confidence": 0.9901,
+              "bbox": [
+                33,
+                980,
+                1029,
+                1039
+              ],
+              "polygon": [
+                [
+                  33,
+                  993
+                ],
+                [
+                  1028,
+                  980
+                ],
+                [
+                  1029,
+                  1027
+                ],
+                [
+                  33,
+                  1039
+                ]
+              ]
+            },
+            {
+              "line_index": 24,
+              "text": "benefit of their members and executives.",
+              "confidence": 0.9985,
+              "bbox": [
+                38,
+                1033,
+                688,
+                1074
+              ],
+              "polygon": [
+                [
+                  38,
+                  1036
+                ],
+                [
+                  688,
+                  1033
+                ],
+                [
+                  688,
+                  1072
+                ],
+                [
+                  38,
+                  1074
+                ]
+              ]
+            },
+            {
+              "line_index": 25,
+              "text": "The fact that these men, ten or twenty years after leaving",
+              "confidence": 0.9896,
+              "bbox": [
+                74,
+                1065,
+                1030,
+                1122
+              ],
+              "polygon": [
+                [
+                  74,
+                  1076
+                ],
+                [
+                  1029,
+                  1065
+                ],
+                [
+                  1030,
+                  1111
+                ],
+                [
+                  75,
+                  1122
+                ]
+              ]
+            },
+            {
+              "line_index": 26,
+              "text": "grade school, high school, or college, come and take this train-",
+              "confidence": 0.9979,
+              "bbox": [
+                38,
+                1108,
+                1031,
+                1165
+              ],
+              "polygon": [
+                [
+                  38,
+                  1119
+                ],
+                [
+                  1031,
+                  1108
+                ],
+                [
+                  1031,
+                  1154
+                ],
+                [
+                  38,
+                  1165
+                ]
+              ]
+            },
+            {
+              "line_index": 27,
+              "text": "ing is a glaring commentary on the shocking deficiencies of our",
+              "confidence": 0.9956,
+              "bbox": [
+                39,
+                1149,
+                1034,
+                1209
+              ],
+              "polygon": [
+                [
+                  39,
+                  1159
+                ],
+                [
+                  1033,
+                  1149
+                ],
+                [
+                  1034,
+                  1199
+                ],
+                [
+                  40,
+                  1209
+                ]
+              ]
+            },
+            {
+              "line_index": 28,
+              "text": "educational system.",
+              "confidence": 0.9989,
+              "bbox": [
+                43,
+                1200,
+                346,
+                1243
+              ],
+              "polygon": [
+                [
+                  43,
+                  1200
+                ],
+                [
+                  346,
+                  1204
+                ],
+                [
+                  345,
+                  1243
+                ],
+                [
+                  43,
+                  1238
+                ]
+              ]
+            },
+            {
+              "line_index": 29,
+              "text": "What do adults really want to study? That is an important",
+              "confidence": 0.9994,
+              "bbox": [
+                80,
+                1235,
+                1034,
+                1287
+              ],
+              "polygon": [
+                [
+                  80,
+                  1241
+                ],
+                [
+                  1033,
+                  1235
+                ],
+                [
+                  1034,
+                  1281
+                ],
+                [
+                  80,
+                  1287
+                ]
+              ]
+            },
+            {
+              "line_index": 30,
+              "text": "question ; and, in order to answer it, the University of Chicago.",
+              "confidence": 0.9902,
+              "bbox": [
+                44,
+                1277,
+                1031,
+                1328
+              ],
+              "polygon": [
+                [
+                  44,
+                  1282
+                ],
+                [
+                  1031,
+                  1277
+                ],
+                [
+                  1031,
+                  1323
+                ],
+                [
+                  44,
+                  1328
+                ]
+              ]
+            },
+            {
+              "line_index": 31,
+              "text": "the American Association for Adult Education, and the United",
+              "confidence": 0.9959,
+              "bbox": [
+                44,
+                1318,
+                1034,
+                1370
+              ],
+              "polygon": [
+                [
+                  44,
+                  1322
+                ],
+                [
+                  1033,
+                  1318
+                ],
+                [
+                  1034,
+                  1366
+                ],
+                [
+                  44,
+                  1370
+                ]
+              ]
+            },
+            {
+              "line_index": 32,
+              "text": "Y. M. C. A. Schools made a survey that cost $25,000 and cov-",
+              "confidence": 0.976,
+              "bbox": [
+                42,
+                1359,
+                1034,
+                1412
+              ],
+              "polygon": [
+                [
+                  42,
+                  1361
+                ],
+                [
+                  1033,
+                  1359
+                ],
+                [
+                  1034,
+                  1411
+                ],
+                [
+                  42,
+                  1412
+                ]
+              ]
+            },
+            {
+              "line_index": 33,
+              "text": "ered two years.",
+              "confidence": 0.9998,
+              "bbox": [
+                48,
+                1405,
+                289,
+                1448
+              ],
+              "polygon": [
+                [
+                  48,
+                  1405
+                ],
+                [
+                  289,
+                  1408
+                ],
+                [
+                  288,
+                  1448
+                ],
+                [
+                  48,
+                  1445
+                ]
+              ]
+            },
+            {
+              "line_index": 34,
+              "text": "That survey revealed that the prime interest of adults is",
+              "confidence": 0.9999,
+              "bbox": [
+                82,
+                1439,
+                1035,
+                1498
+              ],
+              "polygon": [
+                [
+                  82,
+                  1443
+                ],
+                [
+                  1035,
+                  1439
+                ],
+                [
+                  1035,
+                  1494
+                ],
+                [
+                  82,
+                  1498
+                ]
+              ]
+            },
+            {
+              "line_index": 35,
+              "text": "health. It also revealed that their second interest is in develop-",
+              "confidence": 0.9961,
+              "bbox": [
+                47,
+                1485,
+                1031,
+                1533
+              ],
+              "polygon": [
+                [
+                  47,
+                  1487
+                ],
+                [
+                  1031,
+                  1485
+                ],
+                [
+                  1031,
+                  1531
+                ],
+                [
+                  47,
+                  1533
+                ]
+              ]
+            },
+            {
+              "line_index": 36,
+              "text": "ing skill in human relationships; they want to learn the tech.",
+              "confidence": 0.981,
+              "bbox": [
+                47,
+                1525,
+                1032,
+                1576
+              ],
+              "polygon": [
+                [
+                  47,
+                  1529
+                ],
+                [
+                  1032,
+                  1525
+                ],
+                [
+                  1032,
+                  1573
+                ],
+                [
+                  47,
+                  1576
+                ]
+              ]
+            }
+          ],
+          "error": null
+        }
+      ]
+    },
+    "02_real_english_digital": {
+      "sample_id": "02_real_english_digital",
+      "filename": "02_real_english_digital.pdf",
+      "description": "Authentic digital scholarly book page on Trika Shaivism from Hay House Publishers",
+      "language": "en",
+      "page_count": 1,
+      "cold_start": true,
+      "avg_page_time_ms": 12370.44,
+      "total_document_time_sec": 12.42,
+      "peak_rss_mb": 4015.72,
+      "memory_delta_mb": 1317.48,
+      "line_count": 31,
+      "average_confidence": 0.9036,
+      "raw_accuracy": {
+        "cer": 0.0674,
+        "char_accuracy_pct": 93.26,
+        "wer": 0.0891,
+        "word_accuracy_pct": 91.09,
+        "ref_char_count": 1811,
+        "hyp_char_count": 1727,
+        "ref_word_count": 258,
+        "hyp_word_count": 248
+      },
+      "nfc_accuracy": {
+        "cer": 0.0674,
+        "char_accuracy_pct": 93.26,
+        "wer": 0.0891,
+        "word_accuracy_pct": 91.09
+      },
+      "search_accuracy": {
+        "cer": 0.0666,
+        "search_char_accuracy_pct": 93.34,
+        "wer": 0.0902,
+        "search_word_accuracy_pct": 90.98,
+        "ref_token_count": 266,
+        "hyp_token_count": 257,
+        "word_accuracy_improvement_pct": -0.11
+      },
+      "matra_preservation": {
+        "chhoti_i": {
+          "label": "ि (Chhoti-i)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "badi_i": {
+          "label": "ी (Badi-i)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "chhota_u": {
+          "label": "ु (Chhota-u)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "bada_u": {
+          "label": "ू (Bada-u)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "aa": {
+          "label": "ा (Aa)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "e": {
+          "label": "े (E)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "ai": {
+          "label": "ै (Ai)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "o": {
+          "label": "ो (O)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "au": {
+          "label": "ौ (Au)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "ri": {
+          "label": "ृ (Ri)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "anusvara": {
+          "label": "ं (Anusvara)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "visarga": {
+          "label": "ः (Visarga)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "virama": {
+          "label": "् (Halant/Virama)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        }
+      },
+      "pages": [
+        {
+          "page_number": 1,
+          "width": 2125,
+          "height": 2750,
+          "dpi": 250,
+          "detected_rotation": 0,
+          "line_count": 31,
+          "average_confidence": 0.9036,
+          "duration_ms": 12370.44,
+          "cold_start": true,
+          "lines": [
+            {
+              "line_index": 0,
+              "text": "Ptepehhah",
+              "confidence": 0.5894,
+              "bbox": [
+                306,
+                241,
+                1369,
+                365
+              ],
+              "polygon": [
+                [
+                  306,
+                  241
+                ],
+                [
+                  1369,
+                  241
+                ],
+                [
+                  1369,
+                  365
+                ],
+                [
+                  306,
+                  365
+                ]
+              ]
+            },
+            {
+              "line_index": 1,
+              "text": "hPhatp!PpH",
+              "confidence": 0.4598,
+              "bbox": [
+                308,
+                370,
+                1362,
+                488
+              ],
+              "polygon": [
+                [
+                  308,
+                  370
+                ],
+                [
+                  1362,
+                  370
+                ],
+                [
+                  1362,
+                  488
+                ],
+                [
+                  308,
+                  488
+                ]
+              ]
+            },
+            {
+              "line_index": 2,
+              "text": "HHphP!",
+              "confidence": 0.4157,
+              "bbox": [
+                308,
+                490,
+                1380,
+                619
+              ],
+              "polygon": [
+                [
+                  308,
+                  494
+                ],
+                [
+                  1379,
+                  490
+                ],
+                [
+                  1380,
+                  614
+                ],
+                [
+                  309,
+                  619
+                ]
+              ]
+            },
+            {
+              "line_index": 3,
+              "text": "IPpHmIpK pIt",
+              "confidence": 0.4957,
+              "bbox": [
+                304,
+                610,
+                1322,
+                737
+              ],
+              "polygon": [
+                [
+                  304,
+                  619
+                ],
+                [
+                  1321,
+                  610
+                ],
+                [
+                  1322,
+                  728
+                ],
+                [
+                  305,
+                  737
+                ]
+              ]
+            },
+            {
+              "line_index": 4,
+              "text": "n T   , a",
+              "confidence": 0.6219,
+              "bbox": [
+                313,
+                773,
+                1859,
+                823
+              ],
+              "polygon": [
+                [
+                  313,
+                  773
+                ],
+                [
+                  1859,
+                  773
+                ],
+                [
+                  1859,
+                  823
+                ],
+                [
+                  313,
+                  823
+                ]
+              ]
+            },
+            {
+              "line_index": 5,
+              "text": "i nE i",
+              "confidence": 0.5436,
+              "bbox": [
+                263,
+                834,
+                1859,
+                883
+              ],
+              "polygon": [
+                [
+                  263,
+                  834
+                ],
+                [
+                  1859,
+                  834
+                ],
+                [
+                  1859,
+                  883
+                ],
+                [
+                  263,
+                  883
+                ]
+              ]
+            },
+            {
+              "line_index": 6,
+              "text": "believed to possess the innate potential to realise their true nature as divine",
+              "confidence": 0.9999,
+              "bbox": [
+                263,
+                894,
+                1859,
+                943
+              ],
+              "polygon": [
+                [
+                  263,
+                  894
+                ],
+                [
+                  1859,
+                  894
+                ],
+                [
+                  1859,
+                  943
+                ],
+                [
+                  263,
+                  943
+                ]
+              ]
+            },
+            {
+              "line_index": 7,
+              "text": "beings. However, this realisation is often obstructed by the limitations of",
+              "confidence": 0.998,
+              "bbox": [
+                263,
+                954,
+                1859,
+                1003
+              ],
+              "polygon": [
+                [
+                  263,
+                  954
+                ],
+                [
+                  1859,
+                  954
+                ],
+                [
+                  1859,
+                  1003
+                ],
+                [
+                  263,
+                  1003
+                ]
+              ]
+            },
+            {
+              "line_index": 8,
+              "text": "the ego, ignorance, and attachment to worldly experiences. The path of",
+              "confidence": 0.9997,
+              "bbox": [
+                263,
+                1014,
+                1859,
+                1063
+              ],
+              "polygon": [
+                [
+                  263,
+                  1014
+                ],
+                [
+                  1859,
+                  1014
+                ],
+                [
+                  1859,
+                  1063
+                ],
+                [
+                  263,
+                  1063
+                ]
+              ]
+            },
+            {
+              "line_index": 9,
+              "text": "Trika Shaivism involves the systematic unravelling of these limitations and",
+              "confidence": 0.9977,
+              "bbox": [
+                261,
+                1070,
+                1859,
+                1124
+              ],
+              "polygon": [
+                [
+                  261,
+                  1070
+                ],
+                [
+                  1859,
+                  1072
+                ],
+                [
+                  1859,
+                  1124
+                ],
+                [
+                  261,
+                  1121
+                ]
+              ]
+            },
+            {
+              "line_index": 10,
+              "text": "the awakening of the dormant divine consciousness within.",
+              "confidence": 0.9979,
+              "bbox": [
+                261,
+                1130,
+                1500,
+                1184
+              ],
+              "polygon": [
+                [
+                  261,
+                  1132
+                ],
+                [
+                  1499,
+                  1130
+                ],
+                [
+                  1500,
+                  1182
+                ],
+                [
+                  261,
+                  1184
+                ]
+              ]
+            },
+            {
+              "line_index": 11,
+              "text": "Trika Shaivism offers a comprehensive framework for spiritual practice",
+              "confidence": 0.9998,
+              "bbox": [
+                315,
+                1192,
+                1857,
+                1244
+              ],
+              "polygon": [
+                [
+                  315,
+                  1192
+                ],
+                [
+                  1857,
+                  1192
+                ],
+                [
+                  1857,
+                  1244
+                ],
+                [
+                  315,
+                  1244
+                ]
+              ]
+            },
+            {
+              "line_index": 12,
+              "text": "and self-realisation. It encompasses various methods, including mantra",
+              "confidence": 0.9949,
+              "bbox": [
+                263,
+                1253,
+                1859,
+                1304
+              ],
+              "polygon": [
+                [
+                  263,
+                  1253
+                ],
+                [
+                  1859,
+                  1253
+                ],
+                [
+                  1859,
+                  1304
+                ],
+                [
+                  263,
+                  1304
+                ]
+              ]
+            },
+            {
+              "line_index": 13,
+              "text": "recitation, meditation, breath control, ritual worship, and contemplative",
+              "confidence": 0.9976,
+              "bbox": [
+                263,
+                1313,
+                1857,
+                1362
+              ],
+              "polygon": [
+                [
+                  263,
+                  1313
+                ],
+                [
+                  1857,
+                  1313
+                ],
+                [
+                  1857,
+                  1362
+                ],
+                [
+                  263,
+                  1362
+                ]
+              ]
+            },
+            {
+              "line_index": 14,
+              "text": "inquiry. These practices are designed to purify the mind, cultivate",
+              "confidence": 0.9997,
+              "bbox": [
+                263,
+                1373,
+                1859,
+                1424
+              ],
+              "polygon": [
+                [
+                  263,
+                  1373
+                ],
+                [
+                  1859,
+                  1373
+                ],
+                [
+                  1859,
+                  1424
+                ],
+                [
+                  263,
+                  1424
+                ]
+              ]
+            },
+            {
+              "line_index": 15,
+              "text": "heightened awareness, and ultimately lead to the direct experience of the",
+              "confidence": 0.9861,
+              "bbox": [
+                263,
+                1433,
+                1859,
+                1482
+              ],
+              "polygon": [
+                [
+                  263,
+                  1433
+                ],
+                [
+                  1859,
+                  1433
+                ],
+                [
+                  1859,
+                  1482
+                ],
+                [
+                  263,
+                  1482
+                ]
+              ]
+            },
+            {
+              "line_index": 16,
+              "text": "divine. One of the distinguishing features of Trika Shaivism is its emphasis",
+              "confidence": 0.9962,
+              "bbox": [
+                261,
+                1489,
+                1859,
+                1543
+              ],
+              "polygon": [
+                [
+                  261,
+                  1489
+                ],
+                [
+                  1859,
+                  1491
+                ],
+                [
+                  1859,
+                  1543
+                ],
+                [
+                  261,
+                  1540
+                ]
+              ]
+            },
+            {
+              "line_index": 17,
+              "text": "on the direct transmission of spiritual knowledge from teacher to student, or",
+              "confidence": 1.0,
+              "bbox": [
+                263,
+                1551,
+                1859,
+                1603
+              ],
+              "polygon": [
+                [
+                  263,
+                  1551
+                ],
+                [
+                  1859,
+                  1551
+                ],
+                [
+                  1859,
+                  1603
+                ],
+                [
+                  263,
+                  1603
+                ]
+              ]
+            },
+            {
+              "line_index": 18,
+              "text": "more broadly, experiential accessibility to insights into the nature of reality.",
+              "confidence": 0.9995,
+              "bbox": [
+                263,
+                1613,
+                1857,
+                1663
+              ],
+              "polygon": [
+                [
+                  263,
+                  1613
+                ],
+                [
+                  1857,
+                  1613
+                ],
+                [
+                  1857,
+                  1663
+                ],
+                [
+                  263,
+                  1663
+                ]
+              ]
+            },
+            {
+              "line_index": 19,
+              "text": "This lineage-based transmission, known as śaktipāt, involves the transfer of",
+              "confidence": 0.9904,
+              "bbox": [
+                266,
+                1671,
+                1859,
+                1723
+              ],
+              "polygon": [
+                [
+                  266,
+                  1671
+                ],
+                [
+                  1859,
+                  1671
+                ],
+                [
+                  1859,
+                  1723
+                ],
+                [
+                  266,
+                  1723
+                ]
+              ]
+            },
+            {
+              "line_index": 20,
+              "text": "spiritual energy and awakening through the grace of an enlightened master.",
+              "confidence": 0.9957,
+              "bbox": [
+                266,
+                1732,
+                1857,
+                1783
+              ],
+              "polygon": [
+                [
+                  266,
+                  1732
+                ],
+                [
+                  1857,
+                  1732
+                ],
+                [
+                  1857,
+                  1783
+                ],
+                [
+                  266,
+                  1783
+                ]
+              ]
+            },
+            {
+              "line_index": 21,
+              "text": "Guru-shishya parampara (the tradition of passing spiritual knowledge from",
+              "confidence": 0.9995,
+              "bbox": [
+                266,
+                1792,
+                1857,
+                1843
+              ],
+              "polygon": [
+                [
+                  266,
+                  1792
+                ],
+                [
+                  1857,
+                  1792
+                ],
+                [
+                  1857,
+                  1843
+                ],
+                [
+                  266,
+                  1843
+                ]
+              ]
+            },
+            {
+              "line_index": 22,
+              "text": "guru to disciple) is considered vital in Trika Shaivism, as the guidance and",
+              "confidence": 0.9946,
+              "bbox": [
+                263,
+                1850,
+                1859,
+                1904
+              ],
+              "polygon": [
+                [
+                  263,
+                  1852
+                ],
+                [
+                  1859,
+                  1850
+                ],
+                [
+                  1859,
+                  1901
+                ],
+                [
+                  264,
+                  1904
+                ]
+              ]
+            },
+            {
+              "line_index": 23,
+              "text": "blessings of a realised teacher are seen as essential for the spiritual",
+              "confidence": 0.99,
+              "bbox": [
+                263,
+                1912,
+                1859,
+                1962
+              ],
+              "polygon": [
+                [
+                  263,
+                  1912
+                ],
+                [
+                  1859,
+                  1912
+                ],
+                [
+                  1859,
+                  1962
+                ],
+                [
+                  263,
+                  1962
+                ]
+              ]
+            },
+            {
+              "line_index": 24,
+              "text": "aspirant's progress.",
+              "confidence": 0.9999,
+              "bbox": [
+                268,
+                1977,
+                668,
+                2022
+              ],
+              "polygon": [
+                [
+                  268,
+                  1977
+                ],
+                [
+                  668,
+                  1977
+                ],
+                [
+                  668,
+                  2022
+                ],
+                [
+                  268,
+                  2022
+                ]
+              ]
+            },
+            {
+              "line_index": 25,
+              "text": "In Kashmir Shaivism, the descent of divine grace, or śaktipāt, is",
+              "confidence": 0.9911,
+              "bbox": [
+                311,
+                2028,
+                1857,
+                2082
+              ],
+              "polygon": [
+                [
+                  311,
+                  2028
+                ],
+                [
+                  1857,
+                  2030
+                ],
+                [
+                  1857,
+                  2082
+                ],
+                [
+                  311,
+                  2080
+                ]
+              ]
+            },
+            {
+              "line_index": 26,
+              "text": "categorised into different levels as shown below:",
+              "confidence": 1.0,
+              "bbox": [
+                263,
+                2088,
+                1283,
+                2142
+              ],
+              "polygon": [
+                [
+                  263,
+                  2090
+                ],
+                [
+                  1283,
+                  2088
+                ],
+                [
+                  1283,
+                  2140
+                ],
+                [
+                  264,
+                  2142
+                ]
+              ]
+            },
+            {
+              "line_index": 27,
+              "text": "1. Tīvra-tīvra-śaktipāt: This highest level results in immediate",
+              "confidence": 0.9906,
+              "bbox": [
+                317,
+                2200,
+                1855,
+                2252
+              ],
+              "polygon": [
+                [
+                  317,
+                  2200
+                ],
+                [
+                  1855,
+                  2200
+                ],
+                [
+                  1855,
+                  2252
+                ],
+                [
+                  317,
+                  2252
+                ]
+              ]
+            },
+            {
+              "line_index": 28,
+              "text": "liberation and oneness with Shiva.",
+              "confidence": 1.0,
+              "bbox": [
+                364,
+                2260,
+                1084,
+                2310
+              ],
+              "polygon": [
+                [
+                  364,
+                  2260
+                ],
+                [
+                  1084,
+                  2260
+                ],
+                [
+                  1084,
+                  2310
+                ],
+                [
+                  364,
+                  2310
+                ]
+              ]
+            },
+            {
+              "line_index": 29,
+              "text": "2. Tīvra-madhya-saktipāt: This level leads to self-realised",
+              "confidence": 0.9672,
+              "bbox": [
+                317,
+                2353,
+                1859,
+                2404
+              ],
+              "polygon": [
+                [
+                  317,
+                  2353
+                ],
+                [
+                  1859,
+                  2353
+                ],
+                [
+                  1859,
+                  2404
+                ],
+                [
+                  317,
+                  2404
+                ]
+              ]
+            },
+            {
+              "line_index": 30,
+              "text": "enlightenment without the need for a guru.",
+              "confidence": 1.0,
+              "bbox": [
+                368,
+                2415,
+                1260,
+                2466
+              ],
+              "polygon": [
+                [
+                  368,
+                  2415
+                ],
+                [
+                  1260,
+                  2415
+                ],
+                [
+                  1260,
+                  2466
+                ],
+                [
+                  368,
+                  2466
+                ]
+              ]
+            }
+          ],
+          "error": null
+        }
+      ]
+    },
+    "03_real_hindi_prose": {
+      "sample_id": "03_real_hindi_prose",
+      "filename": "03_real_hindi_prose.pdf",
+      "description": "Authentic classic Hindi literature prose from Munshi Premchand's Godan (300 DPI book layout)",
+      "language": "hi",
+      "page_count": 1,
+      "cold_start": true,
+      "avg_page_time_ms": 7719.46,
+      "total_document_time_sec": 7.78,
+      "peak_rss_mb": 4015.78,
+      "memory_delta_mb": -1.86,
+      "line_count": 19,
+      "average_confidence": 0.9247,
+      "raw_accuracy": {
+        "cer": 0.1026,
+        "char_accuracy_pct": 89.74,
+        "wer": 0.438,
+        "word_accuracy_pct": 56.2,
+        "ref_char_count": 1325,
+        "hyp_char_count": 1335,
+        "ref_word_count": 274,
+        "hyp_word_count": 309
+      },
+      "nfc_accuracy": {
+        "cer": 0.1026,
+        "char_accuracy_pct": 89.74,
+        "wer": 0.438,
+        "word_accuracy_pct": 56.2
+      },
+      "search_accuracy": {
+        "cer": 0.0972,
+        "search_char_accuracy_pct": 90.28,
+        "wer": 0.4107,
+        "search_word_accuracy_pct": 58.93,
+        "ref_token_count": 280,
+        "hyp_token_count": 315,
+        "word_accuracy_improvement_pct": 2.72
+      },
+      "matra_preservation": {
+        "chhoti_i": {
+          "label": "ि (Chhoti-i)",
+          "reference_occurrences": 25,
+          "hypothesis_occurrences": 10,
+          "delta": -15,
+          "preservation_rate_pct": 40.0
+        },
+        "badi_i": {
+          "label": "ी (Badi-i)",
+          "reference_occurrences": 55,
+          "hypothesis_occurrences": 55,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "chhota_u": {
+          "label": "ु (Chhota-u)",
+          "reference_occurrences": 17,
+          "hypothesis_occurrences": 15,
+          "delta": -2,
+          "preservation_rate_pct": 88.24
+        },
+        "bada_u": {
+          "label": "ू (Bada-u)",
+          "reference_occurrences": 9,
+          "hypothesis_occurrences": 9,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "aa": {
+          "label": "ा (Aa)",
+          "reference_occurrences": 120,
+          "hypothesis_occurrences": 121,
+          "delta": 1,
+          "preservation_rate_pct": 100.0
+        },
+        "e": {
+          "label": "े (E)",
+          "reference_occurrences": 59,
+          "hypothesis_occurrences": 38,
+          "delta": -21,
+          "preservation_rate_pct": 64.41
+        },
+        "ai": {
+          "label": "ै (Ai)",
+          "reference_occurrences": 3,
+          "hypothesis_occurrences": 4,
+          "delta": 1,
+          "preservation_rate_pct": 100.0
+        },
+        "o": {
+          "label": "ो (O)",
+          "reference_occurrences": 39,
+          "hypothesis_occurrences": 42,
+          "delta": 3,
+          "preservation_rate_pct": 100.0
+        },
+        "au": {
+          "label": "ौ (Au)",
+          "reference_occurrences": 3,
+          "hypothesis_occurrences": 3,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "ri": {
+          "label": "ृ (Ri)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "anusvara": {
+          "label": "ं (Anusvara)",
+          "reference_occurrences": 21,
+          "hypothesis_occurrences": 8,
+          "delta": -13,
+          "preservation_rate_pct": 38.1
+        },
+        "visarga": {
+          "label": "ः (Visarga)",
+          "reference_occurrences": 1,
+          "hypothesis_occurrences": 1,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "virama": {
+          "label": "् (Halant/Virama)",
+          "reference_occurrences": 22,
+          "hypothesis_occurrences": 21,
+          "delta": -1,
+          "preservation_rate_pct": 95.45
+        }
+      },
+      "pages": [
+        {
+          "page_number": 1,
+          "width": 2067,
+          "height": 2924,
+          "dpi": 250,
+          "detected_rotation": 0,
+          "line_count": 19,
+          "average_confidence": 0.9247,
+          "duration_ms": 7719.46,
+          "cold_start": true,
+          "lines": [
+            {
+              "line_index": 0,
+              "text": "गोदान - मु शी प्र मचन्द",
+              "confidence": 0.8651,
+              "bbox": [
+                203,
+                139,
+                584,
+                199
+              ],
+              "polygon": [
+                [
+                  204,
+                  139
+                ],
+                [
+                  584,
+                  144
+                ],
+                [
+                  583,
+                  199
+                ],
+                [
+                  203,
+                  194
+                ]
+              ]
+            },
+            {
+              "line_index": 1,
+              "text": "२",
+              "confidence": 0.5584,
+              "bbox": [
+                1829,
+                151,
+                1857,
+                192
+              ],
+              "polygon": [
+                [
+                  1829,
+                  151
+                ],
+                [
+                  1857,
+                  151
+                ],
+                [
+                  1857,
+                  192
+                ],
+                [
+                  1829,
+                  192
+                ]
+              ]
+            },
+            {
+              "line_index": 2,
+              "text": "होरी से मर गाँव का एक सीधा-साधा कसान था। उसक परवार मे' उसकी पत्नी धनया, दो बे टया",
+              "confidence": 0.9799,
+              "bbox": [
+                205,
+                292,
+                1763,
+                350
+              ],
+              "polygon": [
+                [
+                  205,
+                  295
+                ],
+                [
+                  1762,
+                  292
+                ],
+                [
+                  1763,
+                  347
+                ],
+                [
+                  205,
+                  350
+                ]
+              ]
+            },
+            {
+              "line_index": 3,
+              "text": "सोना और रू पा और एक बे टा गोबर था। होरी के पास कुल पा'च बीघ जमीन थी, जसिम' वह रात-दन",
+              "confidence": 0.9563,
+              "bbox": [
+                210,
+                377,
+                1799,
+                423
+              ],
+              "polygon": [
+                [
+                  210,
+                  377
+                ],
+                [
+                  1799,
+                  377
+                ],
+                [
+                  1799,
+                  423
+                ],
+                [
+                  210,
+                  423
+                ]
+              ]
+            },
+            {
+              "line_index": 4,
+              "text": "जी-तोड. मे हनत करता था, ले कन इसके बावजू द दो जू न की रोटी जुटाना भी दू भर था। गाँव के",
+              "confidence": 0.9391,
+              "bbox": [
+                205,
+                450,
+                1721,
+                503
+              ],
+              "polygon": [
+                [
+                  205,
+                  450
+                ],
+                [
+                  1721,
+                  450
+                ],
+                [
+                  1721,
+                  503
+                ],
+                [
+                  205,
+                  503
+                ]
+              ]
+            },
+            {
+              "line_index": 5,
+              "text": "महाजनो' का कर्ज उस पर पीढ़ी-दर-पीढ़ । से लदा हु आ था।",
+              "confidence": 0.9185,
+              "bbox": [
+                208,
+                532,
+                1144,
+                578
+              ],
+              "polygon": [
+                [
+                  208,
+                  532
+                ],
+                [
+                  1144,
+                  532
+                ],
+                [
+                  1144,
+                  578
+                ],
+                [
+                  208,
+                  578
+                ]
+              ]
+            },
+            {
+              "line_index": 6,
+              "text": "प्रातःकाल होरी अपन फटे हुए कु र्त को सं भालता हुआ बाहर नकिला। आज उस रायसाहब अमरपाल",
+              "confidence": 0.952,
+              "bbox": [
+                205,
+                642,
+                1802,
+                694
+              ],
+              "polygon": [
+                [
+                  205,
+                  642
+                ],
+                [
+                  1802,
+                  642
+                ],
+                [
+                  1802,
+                  694
+                ],
+                [
+                  205,
+                  694
+                ]
+              ]
+            },
+            {
+              "line_index": 7,
+              "text": "सहै की ड्योढ़ी पर हाजरी बजान जाना था। रायसाहब इलाके के बड़. जमीं दार थे, और दशहरे पर",
+              "confidence": 0.9301,
+              "bbox": [
+                205,
+                717,
+                1781,
+                770
+              ],
+              "polygon": [
+                [
+                  205,
+                  717
+                ],
+                [
+                  1781,
+                  717
+                ],
+                [
+                  1781,
+                  770
+                ],
+                [
+                  205,
+                  770
+                ]
+              ]
+            },
+            {
+              "line_index": 8,
+              "text": "नजराना न पह'चाने का मतलब था भारी आफत मोल ले ना। धनया न चौखट पर खड. होकर कहा, 'जरा",
+              "confidence": 0.9453,
+              "bbox": [
+                208,
+                797,
+                1816,
+                843
+              ],
+              "polygon": [
+                [
+                  208,
+                  797
+                ],
+                [
+                  1816,
+                  797
+                ],
+                [
+                  1816,
+                  843
+                ],
+                [
+                  208,
+                  843
+                ]
+              ]
+            },
+            {
+              "line_index": 9,
+              "text": "जल्दी लौट आना, ख त मे' पानी लगाना बाकी है।' होरी नो पगड़ी। बाँधते हुए जवाब दिया, 'रायसाहब",
+              "confidence": 0.9397,
+              "bbox": [
+                205,
+                870,
+                1797,
+                923
+              ],
+              "polygon": [
+                [
+                  205,
+                  870
+                ],
+                [
+                  1797,
+                  870
+                ],
+                [
+                  1797,
+                  923
+                ],
+                [
+                  205,
+                  923
+                ]
+              ]
+            },
+            {
+              "line_index": 10,
+              "text": "के यहा' से छूट्टी मलत ही सीधा ख त ही पह\"चँ'गा। भगवान की दया रही तो इस बार ऊख की फसल",
+              "confidence": 0.9353,
+              "bbox": [
+                208,
+                950,
+                1797,
+                996
+              ],
+              "polygon": [
+                [
+                  208,
+                  950
+                ],
+                [
+                  1797,
+                  950
+                ],
+                [
+                  1797,
+                  996
+                ],
+                [
+                  208,
+                  996
+                ]
+              ]
+            },
+            {
+              "line_index": 11,
+              "text": "स महाजन का कुछ बयाज चुकता हो जाएगा।",
+              "confidence": 0.9854,
+              "bbox": [
+                205,
+                1026,
+                920,
+                1078
+              ],
+              "polygon": [
+                [
+                  205,
+                  1026
+                ],
+                [
+                  920,
+                  1026
+                ],
+                [
+                  920,
+                  1078
+                ],
+                [
+                  205,
+                  1078
+                ]
+              ]
+            },
+            {
+              "line_index": 12,
+              "text": "रास्त मे' होरी को भोला अहीर मला, जो अपनी दो गायो' को चराने ल जा रहा था। एक सुदर पछाई",
+              "confidence": 0.9427,
+              "bbox": [
+                208,
+                1140,
+                1795,
+                1186
+              ],
+              "polygon": [
+                [
+                  208,
+                  1140
+                ],
+                [
+                  1795,
+                  1140
+                ],
+                [
+                  1795,
+                  1186
+                ],
+                [
+                  208,
+                  1186
+                ]
+              ]
+            },
+            {
+              "line_index": 13,
+              "text": "गाय को दे खकर होरी की आँख' ललचा गईं। भारतीय कसान के लए गाय के वल एक पशु_ नहीं,",
+              "confidence": 0.9586,
+              "bbox": [
+                203,
+                1211,
+                1705,
+                1266
+              ],
+              "polygon": [
+                [
+                  203,
+                  1211
+                ],
+                [
+                  1705,
+                  1213
+                ],
+                [
+                  1705,
+                  1266
+                ],
+                [
+                  203,
+                  1263
+                ]
+              ]
+            },
+            {
+              "line_index": 14,
+              "text": "बल्क साक्षात लक्ष्मी का स्वरू प और सामाजकि प्रतष्ठा का प्रतीक है। होरी नो मन ही मन सोचा",
+              "confidence": 0.9586,
+              "bbox": [
+                205,
+                1291,
+                1781,
+                1343
+              ],
+              "polygon": [
+                [
+                  205,
+                  1291
+                ],
+                [
+                  1781,
+                  1291
+                ],
+                [
+                  1781,
+                  1343
+                ],
+                [
+                  205,
+                  1343
+                ]
+              ]
+            },
+            {
+              "line_index": 15,
+              "text": "कि यदि उसक दवार पर भी ऐसी एक गाय बँध जाए, तो उसका जीवन धन्य हो जाए",
+              "confidence": 0.9829,
+              "bbox": [
+                203,
+                1364,
+                1511,
+                1421
+              ],
+              "polygon": [
+                [
+                  203,
+                  1364
+                ],
+                [
+                  1511,
+                  1366
+                ],
+                [
+                  1511,
+                  1421
+                ],
+                [
+                  203,
+                  1419
+                ]
+              ]
+            },
+            {
+              "line_index": 16,
+              "text": "उसने भोला से पू छा, 'काका, यह गाय कतिन मे' बे चोगे ?' भोला उदास होकर बोला, 'होरी भाई, घर मे",
+              "confidence": 0.9456,
+              "bbox": [
+                205,
+                1478,
+                1825,
+                1531
+              ],
+              "polygon": [
+                [
+                  205,
+                  1478
+                ],
+                [
+                  1825,
+                  1478
+                ],
+                [
+                  1825,
+                  1531
+                ],
+                [
+                  205,
+                  1531
+                ]
+              ]
+            },
+            {
+              "line_index": 17,
+              "text": "भू से का एक तनिका नहीं है। यदि कोई अस्सी रुपये भी दे दे , तो खुशी-खु शी सौं प दू\"' होरी के मन",
+              "confidence": 0.9398,
+              "bbox": [
+                203,
+                1553,
+                1806,
+                1608
+              ],
+              "polygon": [
+                [
+                  203,
+                  1556
+                ],
+                [
+                  1806,
+                  1553
+                ],
+                [
+                  1806,
+                  1606
+                ],
+                [
+                  203,
+                  1608
+                ]
+              ]
+            },
+            {
+              "line_index": 18,
+              "text": "मे' आशा और आशं का का दवंद्व छडि गया।",
+              "confidence": 0.9357,
+              "bbox": [
+                201,
+                1629,
+                904,
+                1686
+              ],
+              "polygon": [
+                [
+                  201,
+                  1629
+                ],
+                [
+                  904,
+                  1633
+                ],
+                [
+                  904,
+                  1686
+                ],
+                [
+                  201,
+                  1681
+                ]
+              ]
+            }
+          ],
+          "error": null
+        }
+      ]
+    },
+    "04_real_hindi_conjuncts": {
+      "sample_id": "04_real_hindi_conjuncts",
+      "filename": "04_real_hindi_conjuncts.pdf",
+      "description": "Dense academic Hindi with complex ligatures, matras, nuktas, and Sanskritized vocabulary",
+      "language": "hi",
+      "page_count": 1,
+      "cold_start": true,
+      "avg_page_time_ms": 6467.68,
+      "total_document_time_sec": 6.53,
+      "peak_rss_mb": 4016.3,
+      "memory_delta_mb": 2.31,
+      "line_count": 15,
+      "average_confidence": 0.9413,
+      "raw_accuracy": {
+        "cer": 0.151,
+        "char_accuracy_pct": 84.9,
+        "wer": 0.7284,
+        "word_accuracy_pct": 27.16,
+        "ref_char_count": 1040,
+        "hyp_char_count": 1085,
+        "ref_word_count": 162,
+        "hyp_word_count": 207
+      },
+      "nfc_accuracy": {
+        "cer": 0.151,
+        "char_accuracy_pct": 84.9,
+        "wer": 0.7284,
+        "word_accuracy_pct": 27.16
+      },
+      "search_accuracy": {
+        "cer": 0.1524,
+        "search_char_accuracy_pct": 84.76,
+        "wer": 0.7394,
+        "search_word_accuracy_pct": 26.06,
+        "ref_token_count": 165,
+        "hyp_token_count": 214,
+        "word_accuracy_improvement_pct": -1.1
+      },
+      "matra_preservation": {
+        "chhoti_i": {
+          "label": "ि (Chhoti-i)",
+          "reference_occurrences": 48,
+          "hypothesis_occurrences": 27,
+          "delta": -21,
+          "preservation_rate_pct": 56.25
+        },
+        "badi_i": {
+          "label": "ी (Badi-i)",
+          "reference_occurrences": 20,
+          "hypothesis_occurrences": 20,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "chhota_u": {
+          "label": "ु (Chhota-u)",
+          "reference_occurrences": 15,
+          "hypothesis_occurrences": 15,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "bada_u": {
+          "label": "ू (Bada-u)",
+          "reference_occurrences": 6,
+          "hypothesis_occurrences": 7,
+          "delta": 1,
+          "preservation_rate_pct": 100.0
+        },
+        "aa": {
+          "label": "ा (Aa)",
+          "reference_occurrences": 78,
+          "hypothesis_occurrences": 84,
+          "delta": 6,
+          "preservation_rate_pct": 100.0
+        },
+        "e": {
+          "label": "े (E)",
+          "reference_occurrences": 25,
+          "hypothesis_occurrences": 21,
+          "delta": -4,
+          "preservation_rate_pct": 84.0
+        },
+        "ai": {
+          "label": "ै (Ai)",
+          "reference_occurrences": 12,
+          "hypothesis_occurrences": 9,
+          "delta": -3,
+          "preservation_rate_pct": 75.0
+        },
+        "o": {
+          "label": "ो (O)",
+          "reference_occurrences": 12,
+          "hypothesis_occurrences": 13,
+          "delta": 1,
+          "preservation_rate_pct": 100.0
+        },
+        "au": {
+          "label": "ौ (Au)",
+          "reference_occurrences": 1,
+          "hypothesis_occurrences": 4,
+          "delta": 3,
+          "preservation_rate_pct": 100.0
+        },
+        "ri": {
+          "label": "ृ (Ri)",
+          "reference_occurrences": 5,
+          "hypothesis_occurrences": 6,
+          "delta": 1,
+          "preservation_rate_pct": 100.0
+        },
+        "anusvara": {
+          "label": "ं (Anusvara)",
+          "reference_occurrences": 20,
+          "hypothesis_occurrences": 9,
+          "delta": -11,
+          "preservation_rate_pct": 45.0
+        },
+        "visarga": {
+          "label": "ः (Visarga)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "virama": {
+          "label": "् (Halant/Virama)",
+          "reference_occurrences": 80,
+          "hypothesis_occurrences": 78,
+          "delta": -2,
+          "preservation_rate_pct": 97.5
+        }
+      },
+      "pages": [
+        {
+          "page_number": 1,
+          "width": 2067,
+          "height": 2924,
+          "dpi": 250,
+          "detected_rotation": 0,
+          "line_count": 15,
+          "average_confidence": 0.9413,
+          "duration_ms": 6467.68,
+          "cold_start": true,
+          "lines": [
+            {
+              "line_index": 0,
+              "text": "साहत्यकि आलोचना और भाषा-्ा तन",
+              "confidence": 0.9503,
+              "bbox": [
+                208,
+                146,
+                743,
+                192
+              ],
+              "polygon": [
+                [
+                  208,
+                  146
+                ],
+                [
+                  743,
+                  146
+                ],
+                [
+                  743,
+                  192
+                ],
+                [
+                  208,
+                  192
+                ]
+              ]
+            },
+            {
+              "line_index": 1,
+              "text": "पृष्ठ ४५",
+              "confidence": 0.9133,
+              "bbox": [
+                1781,
+                146,
+                1926,
+                206
+              ],
+              "polygon": [
+                [
+                  1781,
+                  146
+                ],
+                [
+                  1926,
+                  146
+                ],
+                [
+                  1926,
+                  206
+                ],
+                [
+                  1781,
+                  206
+                ]
+              ]
+            },
+            {
+              "line_index": 2,
+              "text": "आचार्य रामचन्दर शु कल के अनु सार काव्य का मू ल उद्दे श्य मानव अनु भू त का उदात्तीकरण और",
+              "confidence": 0.9446,
+              "bbox": [
+                203,
+                295,
+                1712,
+                352
+              ],
+              "polygon": [
+                [
+                  203,
+                  299
+                ],
+                [
+                  1712,
+                  295
+                ],
+                [
+                  1712,
+                  347
+                ],
+                [
+                  203,
+                  352
+                ]
+              ]
+            },
+            {
+              "line_index": 3,
+              "text": "लोक-हृ.दय मे' लीन होन की दशा है। उनका दू ष्टकोण सर्वथा वौजञानकि, तर्कसं गत और ऐतहासकि",
+              "confidence": 0.9299,
+              "bbox": [
+                208,
+                375,
+                1746,
+                420
+              ],
+              "polygon": [
+                [
+                  208,
+                  375
+                ],
+                [
+                  1746,
+                  375
+                ],
+                [
+                  1746,
+                  420
+                ],
+                [
+                  208,
+                  420
+                ]
+              ]
+            },
+            {
+              "line_index": 4,
+              "text": "यथार्थवाद पर आधारत था। उन्हों ने छायावादी वै यक्तकिता और अतशिय कल्पनाशीलता का वरोध करते",
+              "confidence": 0.9517,
+              "bbox": [
+                201,
+                443,
+                1793,
+                500
+              ],
+              "polygon": [
+                [
+                  201,
+                  445
+                ],
+                [
+                  1792,
+                  443
+                ],
+                [
+                  1793,
+                  498
+                ],
+                [
+                  201,
+                  500
+                ]
+              ]
+            },
+            {
+              "line_index": 5,
+              "text": "हुए काव्य मे' सामाजकि उत्तरदायत्व और नौ तकि मू ल्यो' की परतष्ठा पर बल दिया।",
+              "confidence": 0.9446,
+              "bbox": [
+                203,
+                523,
+                1506,
+                576
+              ],
+              "polygon": [
+                [
+                  203,
+                  523
+                ],
+                [
+                  1506,
+                  523
+                ],
+                [
+                  1506,
+                  576
+                ],
+                [
+                  203,
+                  576
+                ]
+              ]
+            },
+            {
+              "line_index": 6,
+              "text": "आधु नकि यु ग मे' भाषा के बदलत स्वरू प, पाश्चात्य अभव्यं जनावाद और तकनीकी वकास ने नवीन",
+              "confidence": 0.9395,
+              "bbox": [
+                203,
+                626,
+                1739,
+                683
+              ],
+              "polygon": [
+                [
+                  203,
+                  628
+                ],
+                [
+                  1739,
+                  626
+                ],
+                [
+                  1739,
+                  681
+                ],
+                [
+                  203,
+                  683
+                ]
+              ]
+            },
+            {
+              "line_index": 7,
+              "text": "शब्दावली को जन्म दिया है। ज्ञान-वज्ञान और अं तर्राष्ट्रीय वमिर्श के आदान-प्रदान से हन्दी भाषा",
+              "confidence": 0.9375,
+              "bbox": [
+                205,
+                706,
+                1811,
+                758
+              ],
+              "polygon": [
+                [
+                  205,
+                  706
+                ],
+                [
+                  1811,
+                  706
+                ],
+                [
+                  1811,
+                  758
+                ],
+                [
+                  205,
+                  758
+                ]
+              ]
+            },
+            {
+              "line_index": 8,
+              "text": "मे' अद्भु त पु नरु त्थान और अभवि्यक्ति की वशिष्टता उत्पन्न हु.ई है। तत्सम शब्दों के जटल",
+              "confidence": 0.9413,
+              "bbox": [
+                203,
+                777,
+                1663,
+                834
+              ],
+              "polygon": [
+                [
+                  203,
+                  779
+                ],
+                [
+                  1663,
+                  777
+                ],
+                [
+                  1663,
+                  831
+                ],
+                [
+                  203,
+                  834
+                ]
+              ]
+            },
+            {
+              "line_index": 9,
+              "text": "स युक्ताक्षर जौ से 'दृ ृष्टिकोण', 'व्यक्तत्व', 'अभव्यक्ति, 'सं स्कृ ति, 'पु नरुत्थान', 'वशिष्टता'",
+              "confidence": 0.9012,
+              "bbox": [
+                205,
+                854,
+                1705,
+                907
+              ],
+              "polygon": [
+                [
+                  205,
+                  854
+                ],
+                [
+                  1705,
+                  854
+                ],
+                [
+                  1705,
+                  907
+                ],
+                [
+                  205,
+                  907
+                ]
+              ]
+            },
+            {
+              "line_index": 10,
+              "text": "'प्रामाणकि' तथा 'स्वाभावकि' भाषा को शास्त्रीय गरमा प्रदान करत हैं।",
+              "confidence": 0.9544,
+              "bbox": [
+                210,
+                932,
+                1333,
+                985
+              ],
+              "polygon": [
+                [
+                  210,
+                  932
+                ],
+                [
+                  1333,
+                  932
+                ],
+                [
+                  1333,
+                  985
+                ],
+                [
+                  210,
+                  985
+                ]
+              ]
+            },
+            {
+              "line_index": 11,
+              "text": "तद्भव एव' दे शज शबदों का स्वाभावकि सामं जस्य भाषा के सौन्दर्य को द्वगु णति कर दे ता है।",
+              "confidence": 0.9524,
+              "bbox": [
+                205,
+                1039,
+                1668,
+                1092
+              ],
+              "polygon": [
+                [
+                  205,
+                  1039
+                ],
+                [
+                  1668,
+                  1039
+                ],
+                [
+                  1668,
+                  1092
+                ],
+                [
+                  205,
+                  1092
+                ]
+              ]
+            },
+            {
+              "line_index": 12,
+              "text": "अ'तर्द्व द्व और मानसकि स' वे दनाओ' की सू क्ष्म अभव्यक्ति के लए जब कवि प्रतीकात्मक शैली",
+              "confidence": 0.9385,
+              "bbox": [
+                205,
+                1115,
+                1712,
+                1167
+              ],
+              "polygon": [
+                [
+                  205,
+                  1115
+                ],
+                [
+                  1712,
+                  1115
+                ],
+                [
+                  1712,
+                  1167
+                ],
+                [
+                  205,
+                  1167
+                ]
+              ]
+            },
+            {
+              "line_index": 13,
+              "text": "अपनाता है, तब उसकी सहानु भू ता के वल अपन तक सीमति न रहकर अखल सृ ष्टि के कल्याण का माध्यम",
+              "confidence": 0.9602,
+              "bbox": [
+                203,
+                1186,
+                1806,
+                1245
+              ],
+              "polygon": [
+                [
+                  203,
+                  1186
+                ],
+                [
+                  1806,
+                  1190
+                ],
+                [
+                  1806,
+                  1245
+                ],
+                [
+                  203,
+                  1240
+                ]
+              ]
+            },
+            {
+              "line_index": 14,
+              "text": "बन जाती है।",
+              "confidence": 0.9599,
+              "bbox": [
+                201,
+                1261,
+                404,
+                1316
+              ],
+              "polygon": [
+                [
+                  201,
+                  1261
+                ],
+                [
+                  404,
+                  1261
+                ],
+                [
+                  404,
+                  1316
+                ],
+                [
+                  201,
+                  1316
+                ]
+              ]
+            }
+          ],
+          "error": null
+        }
+      ]
+    },
+    "05_real_sanskrit_classical": {
+      "sample_id": "05_real_sanskrit_classical",
+      "filename": "05_real_sanskrit_classical.pdf",
+      "description": "Authentic classical Sanskrit verse and Adi Shankara prose commentary (sandhi, visarga, avagraha)",
+      "language": "sa",
+      "page_count": 1,
+      "cold_start": true,
+      "avg_page_time_ms": 4661.17,
+      "total_document_time_sec": 4.73,
+      "peak_rss_mb": 4016.3,
+      "memory_delta_mb": -124.91,
+      "line_count": 11,
+      "average_confidence": 0.9469,
+      "raw_accuracy": {
+        "cer": 0.2237,
+        "char_accuracy_pct": 77.63,
+        "wer": 0.9091,
+        "word_accuracy_pct": 9.09,
+        "ref_char_count": 514,
+        "hyp_char_count": 569,
+        "ref_word_count": 66,
+        "hyp_word_count": 89
+      },
+      "nfc_accuracy": {
+        "cer": 0.2237,
+        "char_accuracy_pct": 77.63,
+        "wer": 0.9091,
+        "word_accuracy_pct": 9.09
+      },
+      "search_accuracy": {
+        "cer": 0.2101,
+        "search_char_accuracy_pct": 78.99,
+        "wer": 0.7353,
+        "search_word_accuracy_pct": 26.47,
+        "ref_token_count": 68,
+        "hyp_token_count": 89,
+        "word_accuracy_improvement_pct": 17.38
+      },
+      "matra_preservation": {
+        "chhoti_i": {
+          "label": "ि (Chhoti-i)",
+          "reference_occurrences": 17,
+          "hypothesis_occurrences": 7,
+          "delta": -10,
+          "preservation_rate_pct": 41.18
+        },
+        "badi_i": {
+          "label": "ी (Badi-i)",
+          "reference_occurrences": 1,
+          "hypothesis_occurrences": 4,
+          "delta": 3,
+          "preservation_rate_pct": 100.0
+        },
+        "chhota_u": {
+          "label": "ु (Chhota-u)",
+          "reference_occurrences": 12,
+          "hypothesis_occurrences": 12,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "bada_u": {
+          "label": "ू (Bada-u)",
+          "reference_occurrences": 4,
+          "hypothesis_occurrences": 4,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "aa": {
+          "label": "ा (Aa)",
+          "reference_occurrences": 26,
+          "hypothesis_occurrences": 29,
+          "delta": 3,
+          "preservation_rate_pct": 100.0
+        },
+        "e": {
+          "label": "े (E)",
+          "reference_occurrences": 18,
+          "hypothesis_occurrences": 7,
+          "delta": -11,
+          "preservation_rate_pct": 38.89
+        },
+        "ai": {
+          "label": "ै (Ai)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "o": {
+          "label": "ो (O)",
+          "reference_occurrences": 10,
+          "hypothesis_occurrences": 14,
+          "delta": 4,
+          "preservation_rate_pct": 100.0
+        },
+        "au": {
+          "label": "ौ (Au)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "ri": {
+          "label": "ृ (Ri)",
+          "reference_occurrences": 1,
+          "hypothesis_occurrences": 1,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "anusvara": {
+          "label": "ं (Anusvara)",
+          "reference_occurrences": 5,
+          "hypothesis_occurrences": 2,
+          "delta": -3,
+          "preservation_rate_pct": 40.0
+        },
+        "visarga": {
+          "label": "ः (Visarga)",
+          "reference_occurrences": 16,
+          "hypothesis_occurrences": 4,
+          "delta": -12,
+          "preservation_rate_pct": 25.0
+        },
+        "virama": {
+          "label": "् (Halant/Virama)",
+          "reference_occurrences": 60,
+          "hypothesis_occurrences": 67,
+          "delta": 7,
+          "preservation_rate_pct": 100.0
+        }
+      },
+      "pages": [
+        {
+          "page_number": 1,
+          "width": 2067,
+          "height": 2924,
+          "dpi": 250,
+          "detected_rotation": 0,
+          "line_count": 11,
+          "average_confidence": 0.9469,
+          "duration_ms": 4661.17,
+          "cold_start": true,
+          "lines": [
+            {
+              "line_index": 0,
+              "text": "श्रीमद्भगवद्गीता– द्वतीयोsध्याय: (साड्ख्ययोगः)",
+              "confidence": 0.942,
+              "bbox": [
+                208,
+                144,
+                950,
+                199
+              ],
+              "polygon": [
+                [
+                  208,
+                  144
+                ],
+                [
+                  950,
+                  144
+                ],
+                [
+                  950,
+                  199
+                ],
+                [
+                  208,
+                  199
+                ]
+              ]
+            },
+            {
+              "line_index": 1,
+              "text": "श्लोक ४७-४८",
+              "confidence": 0.9892,
+              "bbox": [
+                1780,
+                137,
+                2005,
+                206
+              ],
+              "polygon": [
+                [
+                  1780,
+                  142
+                ],
+                [
+                  2004,
+                  137
+                ],
+                [
+                  2005,
+                  201
+                ],
+                [
+                  1782,
+                  206
+                ]
+              ]
+            },
+            {
+              "line_index": 2,
+              "text": "कर्मण्य वाधकारस्त मा फल षु कदाचन।",
+              "confidence": 0.9625,
+              "bbox": [
+                667,
+                299,
+                1370,
+                354
+              ],
+              "polygon": [
+                [
+                  667,
+                  299
+                ],
+                [
+                  1370,
+                  299
+                ],
+                [
+                  1370,
+                  354
+                ],
+                [
+                  667,
+                  354
+                ]
+              ]
+            },
+            {
+              "line_index": 3,
+              "text": "मा कर्मफलहे तु र्भू र्मा तो सड्गोऽस्त्वकर्मण॥ ४७॥",
+              "confidence": 0.9389,
+              "bbox": [
+                561,
+                379,
+                1474,
+                441
+              ],
+              "polygon": [
+                [
+                  561,
+                  379
+                ],
+                [
+                  1474,
+                  379
+                ],
+                [
+                  1474,
+                  441
+                ],
+                [
+                  561,
+                  441
+                ]
+              ]
+            },
+            {
+              "line_index": 4,
+              "text": "योगस्थः कुरु कर्माण सड्ग त्यक्त्वा धनञ्जय।",
+              "confidence": 0.9372,
+              "bbox": [
+                597,
+                493,
+                1435,
+                560
+              ],
+              "polygon": [
+                [
+                  598,
+                  493
+                ],
+                [
+                  1435,
+                  500
+                ],
+                [
+                  1435,
+                  560
+                ],
+                [
+                  597,
+                  553
+                ]
+              ]
+            },
+            {
+              "line_index": 5,
+              "text": "सद्ध्यसद्ध्यो: समो भू त्वा समत्वं योग उच्यते ॥ ४८॥",
+              "confidence": 0.9465,
+              "bbox": [
+                538,
+                578,
+                1495,
+                640
+              ],
+              "polygon": [
+                [
+                  538,
+                  578
+                ],
+                [
+                  1495,
+                  578
+                ],
+                [
+                  1495,
+                  640
+                ],
+                [
+                  538,
+                  640
+                ]
+              ]
+            },
+            {
+              "line_index": 6,
+              "text": "शाड्करभाष्यम्:",
+              "confidence": 0.9625,
+              "bbox": [
+                208,
+                790,
+                436,
+                834
+              ],
+              "polygon": [
+                [
+                  208,
+                  790
+                ],
+                [
+                  436,
+                  790
+                ],
+                [
+                  436,
+                  834
+                ],
+                [
+                  208,
+                  834
+                ]
+              ]
+            },
+            {
+              "line_index": 7,
+              "text": "कर्मण्य व अधकार: न तु ज्ञाननिष्ठायाम्। फलहे तु: च मा भू:। यदि कर्मफलह तु: स्या:, ततः कर्मफलजन्मन:",
+              "confidence": 0.9508,
+              "bbox": [
+                203,
+                877,
+                1829,
+                937
+              ],
+              "polygon": [
+                [
+                  203,
+                  877
+                ],
+                [
+                  1829,
+                  882
+                ],
+                [
+                  1829,
+                  937
+                ],
+                [
+                  203,
+                  932
+                ]
+              ]
+            },
+            {
+              "line_index": 8,
+              "text": "हेतु: भव :। अतः सड्गोऽस्तु मा अकर्मणि अकरण प्रीति: मा अस्तु।",
+              "confidence": 0.9282,
+              "bbox": [
+                203,
+                950,
+                1207,
+                1007
+              ],
+              "polygon": [
+                [
+                  203,
+                  950
+                ],
+                [
+                  1207,
+                  953
+                ],
+                [
+                  1206,
+                  1007
+                ],
+                [
+                  203,
+                  1005
+                ]
+              ]
+            },
+            {
+              "line_index": 9,
+              "text": "सड्ग' त्यक्त्वा फलतृ ष्णां वहाय समत्व' भू त्वा यत् कर्म क्रियत तदे व चत्तशुद्धये भवति।",
+              "confidence": 0.9366,
+              "bbox": [
+                205,
+                1053,
+                1601,
+                1106
+              ],
+              "polygon": [
+                [
+                  205,
+                  1053
+                ],
+                [
+                  1601,
+                  1053
+                ],
+                [
+                  1601,
+                  1106
+                ],
+                [
+                  205,
+                  1106
+                ]
+              ]
+            },
+            {
+              "line_index": 10,
+              "text": "सद्ध्यसद्ध्यो: लाभ-अलाभयो: जय-पराजययो: च समबु द्धरि व योगशबदे न उच्यत ।",
+              "confidence": 0.9216,
+              "bbox": [
+                205,
+                1126,
+                1444,
+                1179
+              ],
+              "polygon": [
+                [
+                  205,
+                  1126
+                ],
+                [
+                  1444,
+                  1126
+                ],
+                [
+                  1444,
+                  1179
+                ],
+                [
+                  205,
+                  1179
+                ]
+              ]
+            }
+          ],
+          "error": null
+        }
+      ]
+    },
+    "06_real_photographed_page": {
+      "sample_id": "06_real_photographed_page",
+      "filename": "06_real_photographed_page.pdf",
+      "description": "Realistic smartphone photographed book page with gutter shadow, perspective tilt and lighting gradient",
+      "language": "hi",
+      "page_count": 1,
+      "cold_start": true,
+      "avg_page_time_ms": 3872.02,
+      "total_document_time_sec": 3.93,
+      "peak_rss_mb": 3891.41,
+      "memory_delta_mb": 0.02,
+      "line_count": 7,
+      "average_confidence": 0.9569,
+      "raw_accuracy": {
+        "cer": 0.1272,
+        "char_accuracy_pct": 87.28,
+        "wer": 0.5412,
+        "word_accuracy_pct": 45.88,
+        "ref_char_count": 464,
+        "hyp_char_count": 492,
+        "ref_word_count": 85,
+        "hyp_word_count": 104
+      },
+      "nfc_accuracy": {
+        "cer": 0.1272,
+        "char_accuracy_pct": 87.28,
+        "wer": 0.5412,
+        "word_accuracy_pct": 45.88
+      },
+      "search_accuracy": {
+        "cer": 0.1261,
+        "search_char_accuracy_pct": 87.39,
+        "wer": 0.5172,
+        "search_word_accuracy_pct": 48.28,
+        "ref_token_count": 87,
+        "hyp_token_count": 106,
+        "word_accuracy_improvement_pct": 2.39
+      },
+      "matra_preservation": {
+        "chhoti_i": {
+          "label": "ि (Chhoti-i)",
+          "reference_occurrences": 15,
+          "hypothesis_occurrences": 10,
+          "delta": -5,
+          "preservation_rate_pct": 66.67
+        },
+        "badi_i": {
+          "label": "ी (Badi-i)",
+          "reference_occurrences": 12,
+          "hypothesis_occurrences": 14,
+          "delta": 2,
+          "preservation_rate_pct": 100.0
+        },
+        "chhota_u": {
+          "label": "ु (Chhota-u)",
+          "reference_occurrences": 4,
+          "hypothesis_occurrences": 4,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "bada_u": {
+          "label": "ू (Bada-u)",
+          "reference_occurrences": 3,
+          "hypothesis_occurrences": 4,
+          "delta": 1,
+          "preservation_rate_pct": 100.0
+        },
+        "aa": {
+          "label": "ा (Aa)",
+          "reference_occurrences": 35,
+          "hypothesis_occurrences": 37,
+          "delta": 2,
+          "preservation_rate_pct": 100.0
+        },
+        "e": {
+          "label": "े (E)",
+          "reference_occurrences": 11,
+          "hypothesis_occurrences": 10,
+          "delta": -1,
+          "preservation_rate_pct": 90.91
+        },
+        "ai": {
+          "label": "ै (Ai)",
+          "reference_occurrences": 6,
+          "hypothesis_occurrences": 6,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "o": {
+          "label": "ो (O)",
+          "reference_occurrences": 8,
+          "hypothesis_occurrences": 8,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "au": {
+          "label": "ौ (Au)",
+          "reference_occurrences": 1,
+          "hypothesis_occurrences": 1,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "ri": {
+          "label": "ृ (Ri)",
+          "reference_occurrences": 2,
+          "hypothesis_occurrences": 3,
+          "delta": 1,
+          "preservation_rate_pct": 100.0
+        },
+        "anusvara": {
+          "label": "ं (Anusvara)",
+          "reference_occurrences": 12,
+          "hypothesis_occurrences": 5,
+          "delta": -7,
+          "preservation_rate_pct": 41.67
+        },
+        "visarga": {
+          "label": "ः (Visarga)",
+          "reference_occurrences": 1,
+          "hypothesis_occurrences": 0,
+          "delta": -1,
+          "preservation_rate_pct": 0.0
+        },
+        "virama": {
+          "label": "् (Halant/Virama)",
+          "reference_occurrences": 30,
+          "hypothesis_occurrences": 31,
+          "delta": 1,
+          "preservation_rate_pct": 100.0
+        }
+      },
+      "pages": [
+        {
+          "page_number": 1,
+          "width": 2067,
+          "height": 2924,
+          "dpi": 250,
+          "detected_rotation": 0,
+          "line_count": 7,
+          "average_confidence": 0.9569,
+          "duration_ms": 3872.02,
+          "cold_start": true,
+          "lines": [
+            {
+              "line_index": 0,
+              "text": "भारतीय दर्शन की रूपर खा",
+              "confidence": 0.9799,
+              "bbox": [
+                230,
+                189,
+                709,
+                270
+              ],
+              "polygon": [
+                [
+                  232,
+                  189
+                ],
+                [
+                  709,
+                  199
+                ],
+                [
+                  707,
+                  270
+                ],
+                [
+                  230,
+                  260
+                ]
+              ]
+            },
+            {
+              "line_index": 1,
+              "text": "भारतीय दर्शन जीवन की समस्याओं का समाधान खोजने का गम्भीर और निरिंतर प्रयास है।",
+              "confidence": 0.9525,
+              "bbox": [
+                230,
+                377,
+                1687,
+                464
+              ],
+              "polygon": [
+                [
+                  231,
+                  377
+                ],
+                [
+                  1687,
+                  400
+                ],
+                [
+                  1686,
+                  464
+                ],
+                [
+                  230,
+                  441
+                ]
+              ]
+            },
+            {
+              "line_index": 2,
+              "text": "यह के वल बौद्धकि जज्ञासा की तृप्ति नहीं, अपतिु आत्मानु भू ति और मोक्ष का साधन है",
+              "confidence": 0.9515,
+              "bbox": [
+                228,
+                473,
+                1689,
+                555
+              ],
+              "polygon": [
+                [
+                  229,
+                  473
+                ],
+                [
+                  1689,
+                  494
+                ],
+                [
+                  1688,
+                  555
+                ],
+                [
+                  228,
+                  534
+                ]
+              ]
+            },
+            {
+              "line_index": 3,
+              "text": "सत्य की खोज मे' भारतीय ऋृषियो' ने बाह्य प्रकृ ति के साथ-साथ अं तर्मन का भी सू क्ष्म",
+              "confidence": 0.9386,
+              "bbox": [
+                223,
+                559,
+                1675,
+                651
+              ],
+              "polygon": [
+                [
+                  225,
+                  559
+                ],
+                [
+                  1675,
+                  583
+                ],
+                [
+                  1674,
+                  651
+                ],
+                [
+                  223,
+                  628
+                ]
+              ]
+            },
+            {
+              "line_index": 4,
+              "text": "अध्ययन कया और पाया क चे तना ही समस्त वश्व का मूल अधष्ठान है।",
+              "confidence": 0.9767,
+              "bbox": [
+                223,
+                655,
+                1414,
+                736
+              ],
+              "polygon": [
+                [
+                  224,
+                  655
+                ],
+                [
+                  1414,
+                  674
+                ],
+                [
+                  1413,
+                  736
+                ],
+                [
+                  223,
+                  717
+                ]
+              ]
+            },
+            {
+              "line_index": 5,
+              "text": "न्याय, वै शे षक, सा ख्य, योग, मीमा सा और वे दान्त—ये छह आस्तकि दर्शन कहलात है।",
+              "confidence": 0.942,
+              "bbox": [
+                221,
+                838,
+                1664,
+                923
+              ],
+              "polygon": [
+                [
+                  222,
+                  838
+                ],
+                [
+                  1664,
+                  859
+                ],
+                [
+                  1663,
+                  923
+                ],
+                [
+                  221,
+                  902
+                ]
+              ]
+            },
+            {
+              "line_index": 6,
+              "text": "इन सभी दर्शनों का परम लक्ष्य मानव को दु:खो' से मु क्त कर शाश्वत शा ति प्रदान करना है।",
+              "confidence": 0.9573,
+              "bbox": [
+                221,
+                929,
+                1744,
+                1017
+              ],
+              "polygon": [
+                [
+                  222,
+                  929
+                ],
+                [
+                  1744,
+                  953
+                ],
+                [
+                  1743,
+                  1017
+                ],
+                [
+                  221,
+                  993
+                ]
+              ]
+            }
+          ],
+          "error": null
+        }
+      ]
+    },
+    "07_real_lowres_scan": {
+      "sample_id": "07_real_lowres_scan",
+      "filename": "07_real_lowres_scan.pdf",
+      "description": "Low-resolution 150 DPI archival scan with paper grain, ink bleed, and blur",
+      "language": "en",
+      "page_count": 1,
+      "cold_start": true,
+      "avg_page_time_ms": 6781.9,
+      "total_document_time_sec": 6.83,
+      "peak_rss_mb": 3891.42,
+      "memory_delta_mb": -660.83,
+      "line_count": 9,
+      "average_confidence": 0.9947,
+      "raw_accuracy": {
+        "cer": 0.0559,
+        "char_accuracy_pct": 94.41,
+        "wer": 0.0581,
+        "word_accuracy_pct": 94.19,
+        "ref_char_count": 715,
+        "hyp_char_count": 755,
+        "ref_word_count": 86,
+        "hyp_word_count": 91
+      },
+      "nfc_accuracy": {
+        "cer": 0.0559,
+        "char_accuracy_pct": 94.41,
+        "wer": 0.0581,
+        "word_accuracy_pct": 94.19
+      },
+      "search_accuracy": {
+        "cer": 0.0543,
+        "search_char_accuracy_pct": 94.57,
+        "wer": 0.0455,
+        "search_word_accuracy_pct": 95.45,
+        "ref_token_count": 88,
+        "hyp_token_count": 92,
+        "word_accuracy_improvement_pct": 1.27
+      },
+      "matra_preservation": {
+        "chhoti_i": {
+          "label": "ि (Chhoti-i)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "badi_i": {
+          "label": "ी (Badi-i)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "chhota_u": {
+          "label": "ु (Chhota-u)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "bada_u": {
+          "label": "ू (Bada-u)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "aa": {
+          "label": "ा (Aa)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "e": {
+          "label": "े (E)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "ai": {
+          "label": "ै (Ai)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "o": {
+          "label": "ो (O)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "au": {
+          "label": "ौ (Au)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "ri": {
+          "label": "ृ (Ri)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "anusvara": {
+          "label": "ं (Anusvara)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "visarga": {
+          "label": "ः (Visarga)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        },
+        "virama": {
+          "label": "् (Halant/Virama)",
+          "reference_occurrences": 0,
+          "hypothesis_occurrences": 0,
+          "delta": 0,
+          "preservation_rate_pct": 100.0
+        }
+      },
+      "pages": [
+        {
+          "page_number": 1,
+          "width": 2067,
+          "height": 2924,
+          "dpi": 250,
+          "detected_rotation": 0,
+          "line_count": 9,
+          "average_confidence": 0.9947,
+          "duration_ms": 6781.9,
+          "cold_start": true,
+          "lines": [
+            {
+              "line_index": 0,
+              "text": "BIBLIOTHECA INDICA — HISTORICAL ARCHIVE",
+              "confidence": 0.9789,
+              "bbox": [
+                194,
+                169,
+                1493,
+                222
+              ],
+              "polygon": [
+                [
+                  194,
+                  169
+                ],
+                [
+                  1493,
+                  169
+                ],
+                [
+                  1493,
+                  222
+                ],
+                [
+                  194,
+                  222
+                ]
+              ]
+            },
+            {
+              "line_index": 1,
+              "text": "The preservation of ancient manuscripts requires systematic digitization and archival transcription.",
+              "confidence": 0.9993,
+              "bbox": [
+                198,
+                336,
+                1799,
+                375
+              ],
+              "polygon": [
+                [
+                  198,
+                  336
+                ],
+                [
+                  1799,
+                  336
+                ],
+                [
+                  1799,
+                  375
+                ],
+                [
+                  198,
+                  375
+                ]
+              ]
+            },
+            {
+              "line_index": 2,
+              "text": "Over the centuries, countless treatises on logic, mathematics, astronomy, and linguistics were recorded",
+              "confidence": 0.9954,
+              "bbox": [
+                196,
+                411,
+                1866,
+                450
+              ],
+              "polygon": [
+                [
+                  196,
+                  411
+                ],
+                [
+                  1866,
+                  411
+                ],
+                [
+                  1866,
+                  450
+                ],
+                [
+                  196,
+                  450
+                ]
+              ]
+            },
+            {
+              "line_index": 3,
+              "text": "upon palm leaves and handmade rag paper. Environmental decay, ink flaking, and insect damage frequently",
+              "confidence": 0.9963,
+              "bbox": [
+                191,
+                482,
+                1949,
+                530
+              ],
+              "polygon": [
+                [
+                  191,
+                  484
+                ],
+                [
+                  1949,
+                  482
+                ],
+                [
+                  1949,
+                  528
+                ],
+                [
+                  192,
+                  530
+                ]
+              ]
+            },
+            {
+              "line_index": 4,
+              "text": "compromise the legibility of historic codices.",
+              "confidence": 0.9915,
+              "bbox": [
+                196,
+                562,
+                932,
+                601
+              ],
+              "polygon": [
+                [
+                  196,
+                  562
+                ],
+                [
+                  932,
+                  562
+                ],
+                [
+                  932,
+                  601
+                ],
+                [
+                  196,
+                  601
+                ]
+              ]
+            },
+            {
+              "line_index": 5,
+              "text": "Modern optical character recognition systems must remain robust against non-ideal document characteristics,",
+              "confidence": 0.9965,
+              "bbox": [
+                196,
+                710,
+                1970,
+                749
+              ],
+              "polygon": [
+                [
+                  196,
+                  710
+                ],
+                [
+                  1970,
+                  710
+                ],
+                [
+                  1970,
+                  749
+                ],
+                [
+                  196,
+                  749
+                ]
+              ]
+            },
+            {
+              "line_index": 6,
+              "text": "including low scanning resolutions, uneven thresholding, page bleed-through, and faded typography.",
+              "confidence": 0.9961,
+              "bbox": [
+                194,
+                784,
+                1825,
+                829
+              ],
+              "polygon": [
+                [
+                  194,
+                  784
+                ],
+                [
+                  1825,
+                  784
+                ],
+                [
+                  1825,
+                  829
+                ],
+                [
+                  194,
+                  829
+                ]
+              ]
+            },
+            {
+              "line_index": 7,
+              "text": "Careful signal recovery and adaptive contrast enhancement ensure that scholarly access to historical",
+              "confidence": 0.9979,
+              "bbox": [
+                196,
+                861,
+                1822,
+                900
+              ],
+              "polygon": [
+                [
+                  196,
+                  861
+                ],
+                [
+                  1822,
+                  861
+                ],
+                [
+                  1822,
+                  900
+                ],
+                [
+                  196,
+                  900
+                ]
+              ]
+            },
+            {
+              "line_index": 8,
+              "text": "knowledge remains uninterrupted across generations.",
+              "confidence": 1.0,
+              "bbox": [
+                194,
+                934,
+                1059,
+                980
+              ],
+              "polygon": [
+                [
+                  194,
+                  934
+                ],
+                [
+                  1059,
+                  934
+                ],
+                [
+                  1059,
+                  980
+                ],
+                [
+                  194,
+                  980
+                ]
+              ]
+            }
+          ],
+          "error": null
+        }
+      ]
+    }
+  },
+  "final_rss_mb": 3230.59,
+  "net_memory_growth_mb": 2888.06
+}

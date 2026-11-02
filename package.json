@@ -1,0 +1,24 @@
+{
+  "name": "aks",
+  "version": "1.0.0",
+  "description": "Aks (अक्स) — A Reflection of You",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node scripts/dev.mjs",
+    "dev:frontend": "npm run dev --prefix frontend",
+    "dev:backend": "npm run dev --prefix backend",
+    "build": "npm run build --prefix frontend",
+    "build:frontend": "npm run build --prefix frontend",
+    "test": "npm run test --prefix backend",
+    "test:backend": "npm run test --prefix backend",
+    "test:frontend": "npm run test --prefix frontend",
+    "test:all": "npm run test --prefix backend && npm run test --prefix frontend",
+    "lint": "npm run lint --prefix frontend",
+    "prisma:generate": "npm run prisma:generate --prefix backend",
+    "prisma:migrate": "npm run prisma:migrate --prefix backend",
+    "prisma:migrate:deploy": "npm run prisma:migrate:deploy --prefix backend",
+    "prisma:studio": "npm run prisma:studio --prefix backend",
+    "install:all": "npm install --prefix backend && npm install --prefix frontend"
+  }
+}

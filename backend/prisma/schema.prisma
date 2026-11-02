@@ -1,0 +1,378 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// ── 1. User & Account Management ───────────────────────────────────────────
+model User {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String
+  name         String
+  avatarUrl    String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relationships
+  sessions        Session[]
+  books           Book[]
+  bookFiles       BookFile[]
+  readingProgress ReadingProgress[]
+  bookmarks       Bookmark[]
+  notes           Note[]
+  highlights      Highlight[]
+  readingSessions ReadingSession[]
+  preference      UserPreference?
+  bookPreferences BookPreference[]
+  userAssets      UserAsset[]
+  ocrJobs         OcrJob[]
+  bookPageOcrs    BookPageOcr[]
+  noteSections    NoteSection[]
+
+  @@index([email])
+}
+
+// ── 2. Session Store ────────────────────────────────────────────────────────
+model Session {
+  id        String   @id @default(uuid())
+  sid       String   @unique
+  userId    String?
+  data      String   @db.Text
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+  @@index([userId])
+}
+
+// ── 3. Book ─────────────────────────────────────────────────────────────────
+model Book {
+  id             String     @id @default(uuid())
+  userId         String
+  title          String
+  author         String     @default("Aks Edition")
+  category       String     @default("General")
+  format         String     @default("PDF")
+  totalPages     Int        @default(1)
+  status         BookStatus @default(UNREAD)
+  colorScheme    Json?
+  isUserImported Boolean    @default(true)
+  sourceId       String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  // Relationships
+  user            User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  file            BookFile?
+  readingProgress ReadingProgress?
+  bookmarks       Bookmark[]
+  notes           Note[]
+  highlights      Highlight[]
+  readingSessions ReadingSession[]
+  bookPreference  BookPreference?
+  ocrJobs         OcrJob[]
+  pageOcrs        BookPageOcr[]
+
+  @@unique([id, userId]) // Enforces database-level multi-tenant isolation
+  @@unique([sourceId, userId])
+  @@index([userId, status])
+  @@index([userId, category])
+  @@index([userId, createdAt])
+}
+
+enum BookStatus {
+  UNREAD
+  IN_PROGRESS
+  FINISHED
+}
+
+// ── 4. BookFile (Private PDF Storage Link) ───────────────────────────────────
+model BookFile {
+  id            String   @id @default(uuid())
+  bookId        String   @unique
+  userId        String
+  storagePath   String // Relative path inside private storage e.g. "pdfs/{userId}/{id}.pdf"
+  filename      String // Original filename
+  mimeType      String   @default("application/pdf")
+  fileSizeBytes BigInt
+  fileSha256    String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  book Book @relation(fields: [bookId, userId], references: [id, userId], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([bookId, userId])
+  @@index([userId])
+}
+
+// ── 5. ReadingProgress ──────────────────────────────────────────────────────
+model ReadingProgress {
+  id                  String   @id @default(uuid())
+  bookId              String   @unique
+  userId              String
+  currentPage         Int      @default(1)
+  progressPercent     Float    @default(0)
+  lastOpenedAt        DateTime @default(now())
+  lastOpenedTimestamp BigInt?
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  book Book @relation(fields: [bookId, userId], references: [id, userId], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([bookId, userId])
+  @@index([userId, lastOpenedAt])
+  @@index([userId])
+}
+
+// ── 6. Bookmark ─────────────────────────────────────────────────────────────
+model Bookmark {
+  id        String   @id @default(uuid())
+  bookId    String
+  userId    String
+  page      Int
+  label     String // e.g. "Page 14"
+  color     String   @default("gold") // gold, teal, emerald, amber, indigo, rose
+  sourceId  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  book Book @relation(fields: [bookId, userId], references: [id, userId], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([bookId, page, userId])
+  @@unique([sourceId, userId])
+  @@index([userId])
+  @@index([bookId, page])
+}
+
+// ── 7. Note ─────────────────────────────────────────────────────────────────
+model Note {
+  id                String       @id @default(uuid())
+  userId            String
+  bookId            String? // Nullable: enables standalone Sanctuary notes
+  sectionId         String? // Optional foreign key to user's NoteSection
+  bookTitleSnapshot String? // Preserves volume title even if volume is deleted
+  title             String
+  content           String       @db.Text
+  richContent       Json? // Structured rich text document (TipTap/ProseMirror JSON)
+  page              Int?
+  type              NoteType     @default(BOOK)
+  category          String       @default("Reflection") // Reflection, Checklist, Analysis, Vocabulary
+  isPinned          Boolean      @default(false)
+  journalDate       DateTime? // Calendar date for daily journal entries
+  appearance        String?      @default("classic-paper") // classic-paper, midnight, pure-minimal
+  typography        Json? // Custom typography overrides (fontFamily, fontSize, color, etc.)
+  sourceId          String?
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+
+  user    User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book    Book?        @relation(fields: [bookId], references: [id], onDelete: SetNull)
+  section NoteSection? @relation(fields: [sectionId], references: [id], onDelete: SetNull)
+
+  @@unique([sourceId, userId])
+  @@index([userId, type])
+  @@index([userId, bookId])
+  @@index([userId, sectionId])
+  @@index([userId, isPinned])
+  @@index([userId, journalDate])
+  @@index([userId, updatedAt])
+}
+
+// ── 7a. NoteSection (Personal Notebook Sections) ───────────────────────────
+model NoteSection {
+  id        String   @id @default(uuid())
+  userId    String
+  name      String
+  color     String?
+  icon      String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user  User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  notes Note[]
+
+  @@unique([userId, name])
+  @@index([userId, order])
+}
+
+enum NoteType {
+  BOOK
+  STANDALONE
+}
+
+// ── 8. Highlight ────────────────────────────────────────────────────────────
+model Highlight {
+  id           String   @id @default(uuid())
+  bookId       String
+  userId       String
+  page         Int
+  text         String   @db.Text
+  color        String   @default("gold")
+  positionJson Json?
+  sourceId     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  book Book @relation(fields: [bookId, userId], references: [id, userId], onDelete: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceId, userId])
+  @@index([userId])
+  @@index([bookId, page])
+}
+
+// ── 9. ReadingSession ───────────────────────────────────────────────────────
+model ReadingSession {
+  id              String    @id @default(uuid())
+  userId          String
+  bookId          String?
+  idempotencyKey  String?
+  durationSeconds Int       @default(0)
+  startedAt       DateTime  @default(now())
+  endedAt         DateTime?
+  createdAt       DateTime  @default(now())
+
+  user User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book Book? @relation(fields: [bookId], references: [id], onDelete: SetNull)
+
+  @@unique([userId, idempotencyKey])
+  @@index([userId, startedAt])
+}
+
+// ── 10. UserPreference ──────────────────────────────────────────────────────
+model UserPreference {
+  id                String    @id @default(uuid())
+  userId            String    @unique
+  readingConfig     Json // defaultMode, pageTurnAnimation, animationSpeed, layout, scrollDirection
+  typographyConfig  Json // fontFamily, fontSize, lineHeight, margins, surfaceTheme
+  annotationsConfig Json // defaultMarker, markerColor, defaultHighlightColor, showTimestamps, defaultCategory
+  atmosphereConfig  Json // currentMoodId, backgroundMode, dimming, blur, positioning, motionEnabled
+  storageConfig     Json // autoSaveProgress, autoSaveNotes, syncInterval
+  studyTimeResetAt  DateTime? // Preserves historical sessions on timer reset
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+// ── 11. BookPreference ──────────────────────────────────────────────────────
+model BookPreference {
+  id        String   @id @default(uuid())
+  userId    String
+  bookId    String   @unique
+  config    Json // Specific overrides for this volume
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book Book @relation(fields: [bookId, userId], references: [id, userId], onDelete: Cascade)
+
+  @@unique([bookId, userId])
+  @@index([userId])
+}
+
+// ── 12. UserAsset ───────────────────────────────────────────────────────────
+model UserAsset {
+  id          String    @id @default(uuid())
+  userId      String
+  assetType   AssetType
+  storagePath String // Relative path inside private storage e.g. "backgrounds/{userId}/{id}.ext"
+  filename    String
+  mimeType    String
+  sizeBytes   BigInt
+  isActive    Boolean   @default(true)
+  metadata    Json?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, assetType, isActive])
+}
+
+enum AssetType {
+  BACKGROUND_IMAGE
+  BACKGROUND_VIDEO
+  CUSTOM_MARKER
+}
+
+// ── 13. OcrJob (Asynchronous OCR & Native Text Processing) ───────────────────
+model OcrJob {
+  id             String       @id @default(uuid())
+  userId         String
+  bookId         String
+  status         OcrJobStatus @default(PENDING)
+  language       String       @default("en")
+  totalPages     Int          @default(0)
+  processedPages Int          @default(0)
+  failedPages    Int          @default(0)
+  nativePages    Int          @default(0)
+  ocrPages       Int          @default(0)
+  errorMessage   String?      @db.Text
+  errorDetails   Json?
+  idempotencyKey String?
+  createdAt      DateTime     @default(now())
+  startedAt      DateTime?
+  completedAt    DateTime?
+  updatedAt      DateTime     @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book Book @relation(fields: [bookId, userId], references: [id, userId], onDelete: Cascade)
+
+  @@unique([userId, idempotencyKey])
+  @@index([userId, status])
+  @@index([bookId, status])
+  @@index([status, createdAt])
+}
+
+enum OcrJobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+
+// ── 14. BookPageOcr (Page-Level Text & Search Index Storage) ────────────────
+model BookPageOcr {
+  id                String        @id @default(uuid())
+  userId            String
+  bookId            String
+  pageNumber        Int           // 1-based page number
+  source            OcrPageSource @default(OCR)
+  rawText           String        @db.Text
+  searchTokens      String[]      // Normalized search tokens for indexing
+  normalizerVersion String        @default("1.0.0")
+  language          String        @default("en")
+  confidence        Float?        // Recognition confidence [0.0 - 1.0]
+  lineCount         Int           @default(0)
+  detectedRotation  Int           @default(0)
+  bboxData          Json?         // Line-level bounding box array: [{ text, confidence, bbox }]
+  metadata          Json?         // Resolution, dimensions, duration
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book Book @relation(fields: [bookId, userId], references: [id, userId], onDelete: Cascade)
+
+  @@unique([bookId, pageNumber, userId])
+  @@index([userId])
+  @@index([bookId, pageNumber])
+  @@index([bookId, language])
+}
+
+enum OcrPageSource {
+  NATIVE
+  OCR
+}

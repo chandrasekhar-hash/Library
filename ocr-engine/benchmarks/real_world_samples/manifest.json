@@ -1,0 +1,62 @@
+{
+  "suite": "Aks Phase OCR-2.2 Real-World Book and Scan Benchmarks",
+  "description": "Authentic library book scans, classic literature prose, scholarly Devanagari, and physical distortions",
+  "samples": [
+    {
+      "id": "01_real_english_clean",
+      "pdf": "01_real_english_clean.pdf",
+      "gt": "01_real_english_clean.gt.txt",
+      "lang": "en",
+      "description": "Authentic scanned book page from Dale Carnegie library scan (300 pt image scan)",
+      "source": "Physical library book scan in Aks storage"
+    },
+    {
+      "id": "02_real_english_digital",
+      "pdf": "02_real_english_digital.pdf",
+      "gt": "02_real_english_digital.gt.txt",
+      "lang": "en",
+      "description": "Authentic digital scholarly book page on Trika Shaivism from Hay House Publishers",
+      "source": "Aks storage digital PDF"
+    },
+    {
+      "id": "03_real_hindi_prose",
+      "pdf": "03_real_hindi_prose.pdf",
+      "gt": "03_real_hindi_prose.gt.txt",
+      "lang": "hi",
+      "description": "Authentic classic Hindi literature prose from Munshi Premchand's Godan (300 DPI book layout)",
+      "source": "Classic public domain Hindi literature"
+    },
+    {
+      "id": "04_real_hindi_conjuncts",
+      "pdf": "04_real_hindi_conjuncts.pdf",
+      "gt": "04_real_hindi_conjuncts.gt.txt",
+      "lang": "hi",
+      "description": "Dense academic Hindi with complex ligatures, matras, nuktas, and Sanskritized vocabulary",
+      "source": "Hindi literary criticism corpus"
+    },
+    {
+      "id": "05_real_sanskrit_classical",
+      "pdf": "05_real_sanskrit_classical.pdf",
+      "gt": "05_real_sanskrit_classical.gt.txt",
+      "lang": "sa",
+      "description": "Authentic classical Sanskrit verse and Adi Shankara prose commentary (sandhi, visarga, avagraha)",
+      "source": "Prasthanatrayi Bhagavad Gita text"
+    },
+    {
+      "id": "06_real_photographed_page",
+      "pdf": "06_real_photographed_page.pdf",
+      "gt": "06_real_photographed_page.gt.txt",
+      "lang": "hi",
+      "description": "Realistic smartphone photographed book page with gutter shadow, perspective tilt and lighting gradient",
+      "source": "Photographed book simulation with physical optical distortion"
+    },
+    {
+      "id": "07_real_lowres_scan",
+      "pdf": "07_real_lowres_scan.pdf",
+      "gt": "07_real_lowres_scan.gt.txt",
+      "lang": "en",
+      "description": "Low-resolution 150 DPI archival scan with paper grain, ink bleed, and blur",
+      "source": "Archival document degradation model"
+    }
+  ]
+}

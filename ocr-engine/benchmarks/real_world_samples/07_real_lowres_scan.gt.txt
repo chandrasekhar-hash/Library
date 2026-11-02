@@ -1,0 +1,8 @@
+The preservation of ancient manuscripts requires systematic digitization and archival transcription.
+Over the centuries, countless treatises on logic, mathematics, astronomy, and linguistics were recorded
+upon palm leaves and handmade rag paper. Environmental decay, ink flaking, and insect damage frequently
+compromise the legibility of historic codices.
+Modern optical character recognition systems must remain robust against non-ideal document characteristics,
+including low scanning resolutions, uneven thresholding, page bleed-through, and faded typography.
+Careful signal recovery and adaptive contrast enhancement ensure that scholarly access to historical
+knowledge remains uninterrupted across generations.

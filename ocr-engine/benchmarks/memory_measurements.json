@@ -1,0 +1,75 @@
+{
+  "timestamp": "2026-10-28T18:14:03Z",
+  "system": {
+    "total_ram_gb": 16.0,
+    "available_ram_gb": 6.97,
+    "used_ram_gb": 6.14,
+    "cpu_count": 10
+  },
+  "measurements": {
+    "single_request_1p": {
+      "parent_baseline_rss_mb": 53.0,
+      "child_peak_rss_mb": 2609.22,
+      "combined_peak_rss_mb": 2664.17,
+      "parent_post_completion_rss_mb": 54.92,
+      "parent_memory_delta_mb": 1.92,
+      "duration_sec": 10.05
+    },
+    "timeout_termination": {
+      "parent_pre_timeout_rss_mb": 54.92,
+      "parent_post_timeout_rss_mb": 54.94,
+      "parent_delta_mb": 0.02,
+      "active_children_count": 1,
+      "duration_sec": 0.56,
+      "error_message": "Hard document timeout exceeded (0.05s). Process PID 86546 terminated."
+    },
+    "failed_processing": {
+      "parent_pre_fail_rss_mb": 54.94,
+      "parent_post_fail_rss_mb": 54.94,
+      "parent_delta_mb": 0.0,
+      "error_message": "Child OCR worker failed: Failed to read PDF document: Failed to load document (PDFium: Data format error)."
+    },
+    "ten_page_document": {
+      "pages_processed": 10,
+      "duration_sec": 52.58,
+      "per_page_sec": 5.26,
+      "child_peak_rss_mb": 3202.8,
+      "combined_peak_rss_mb": 3258.16,
+      "parent_pre_rss_mb": 54.94,
+      "parent_post_rss_mb": 55.33,
+      "parent_delta_mb": 0.39
+    },
+    "concurrency_scaling_projections": {
+      "1_concurrent_worker": {
+        "workers_rss_mb": 2609.22,
+        "parent_rss_mb": 53.0,
+        "total_estimated_mb": 2662.22,
+        "total_estimated_gb": 2.6,
+        "fits_in_16gb": true,
+        "safety_verdict": "SAFE (Default recommended limit for 16 GB machines)"
+      },
+      "2_concurrent_workers": {
+        "workers_rss_mb": 5218.44,
+        "parent_rss_mb": 53.0,
+        "total_estimated_mb": 5271.44,
+        "total_estimated_gb": 5.15,
+        "fits_in_16gb": true,
+        "safety_verdict": "BORDERLINE (Consumes ~7.5 GB; risky if other apps/Docker/DB active)"
+      },
+      "3_concurrent_workers": {
+        "workers_rss_mb": 7827.66,
+        "parent_rss_mb": 53.0,
+        "total_estimated_mb": 7880.66,
+        "total_estimated_gb": 7.7,
+        "fits_in_16gb": false,
+        "safety_verdict": "UNSAFE (Consumes >10.5 GB; high risk of kernel OOM freezes on 16 GB host)"
+      }
+    }
+  },
+  "recommended_concurrency_limit": {
+    "development_16gb_machine": 1,
+    "staging_32gb_server": 2,
+    "production_64gb_cluster": 4,
+    "concurrency_overflow_strategy": "reject"
+  }
+}
