@@ -55,3 +55,4 @@ npx prisma migrate deploy --schema=./prisma/schema.prisma
    ```
 3. Copy the pooled or direct `DATABASE_URL` connection string.
 4. Run `npm run migrate:deploy` with your `DATABASE_URL` set.
+

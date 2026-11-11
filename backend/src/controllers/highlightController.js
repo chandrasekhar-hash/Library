@@ -191,7 +191,7 @@ export async function createHighlight(req, res, next) {
 export async function listHighlights(req, res, next) {
   try {
     const { bookId } = req.params;
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
 
     if (!isValidUuid(bookId)) {
       return res.status(400).json({

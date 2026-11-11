@@ -4,14 +4,22 @@ import {
   login,
   logout,
   me,
+  getStorageUsage,
   getCsrfToken,
   getGoogleAuthStatus,
   initiateGoogleAuth,
   handleGoogleCallback,
+  verifyRecovery,
+  resetPassword,
+  updateProfile,
 } from '../controllers/authController.js';
 import { requireAuth } from '../middleware/auth.js';
 import { validateCsrf } from '../middleware/csrf.js';
-import { registerRateLimiter, loginRateLimiter } from '../middleware/rateLimiter.js';
+import {
+  registerRateLimiter,
+  loginRateLimiter,
+  recoveryRateLimiter,
+} from '../middleware/rateLimiter.js';
 
 const router = Router();
 
@@ -28,7 +36,15 @@ router.post('/register', registerRateLimiter, validateCsrf, register);
 router.post('/login', loginRateLimiter, validateCsrf, login);
 router.post('/logout', validateCsrf, logout);
 
-// Current Authenticated User Identity
+// Password Recovery (Email + Mobile Number)
+router.post('/recovery/verify', recoveryRateLimiter, validateCsrf, verifyRecovery);
+router.post('/recovery/reset', recoveryRateLimiter, validateCsrf, resetPassword);
+
+// User Profile Management
+router.patch('/profile', requireAuth, validateCsrf, updateProfile);
+
+// Current Authenticated User Identity & Storage Quota
 router.get('/me', requireAuth, me);
+router.get('/storage', requireAuth, getStorageUsage);
 
 export default router;

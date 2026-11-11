@@ -12,8 +12,9 @@
 
 import fs from 'fs';
 import { prisma } from './prisma.js';
-import { resolveSafeStoragePath } from './storageService.js';
+import { resolveSafeStoragePath, storageAdapter } from './storageService.js';
 import { sanitizeOcrJob } from './ocrJobService.js';
+import { env } from '../config/env.js';
 
 export class IndexingQueueService {
   // In-memory state maps keyed by userId
@@ -130,11 +131,10 @@ export class IndexingQueueService {
 
       if (book.file?.storagePath) {
         try {
-          const resolvedPath = resolveSafeStoragePath(book.file.storagePath);
-          if (fs.existsSync(resolvedPath)) {
+          if (await storageAdapter.fileExists(book.file.storagePath)) {
             physicalPdfExists = true;
-            const stats = fs.statSync(resolvedPath);
-            physicalPdfSizeBytes = stats.size;
+            const meta = await storageAdapter.getMetadata(book.file.storagePath);
+            physicalPdfSizeBytes = meta.sizeBytes;
           }
         } catch (_) {
           physicalPdfExists = false;
@@ -262,15 +262,33 @@ export class IndexingQueueService {
 
     const status = await this.getLibraryIndexingStatus(userId);
     const eligibleToQueue = status.books.filter(
-      (b) => b.physicalPdfExists && !b.isFullyIndexed && b.status !== 'PENDING' && b.status !== 'PROCESSING'
+      (b) =>
+        b.physicalPdfExists &&
+        !b.isFullyIndexed &&
+        b.status !== 'PENDING' &&
+        b.status !== 'PROCESSING' &&
+        (b.totalPages || 0) <= env.MAX_OCR_PAGE_COUNT
     );
 
+    // Safeguard: Limit queued jobs to prevent resource exhaustion
+    const activeJobCount = await prisma.ocrJob.count({
+      where: {
+        userId,
+        status: { in: ['PENDING', 'PROCESSING'] },
+      },
+    });
+
+    const maxAllowed = env.MAX_QUEUED_OCR_JOBS_PER_USER || 10;
+    const availableSlots = Math.max(0, maxAllowed - activeJobCount);
+
+    const booksToEnqueue = eligibleToQueue.slice(0, availableSlots);
     const createdJobs = [];
     const skippedAlreadyIndexed = status.summary.fullyIndexedBooks;
     const skippedActive = status.summary.inProgressBooks;
     const skippedMissingFile = status.summary.missingFileBooks;
+    const skippedOverLimit = eligibleToQueue.length - booksToEnqueue.length;
 
-    for (const book of eligibleToQueue) {
+    for (const book of booksToEnqueue) {
       const job = await prisma.ocrJob.create({
         data: {
           userId,
@@ -288,8 +306,9 @@ export class IndexingQueueService {
 
     return {
       enqueuedCount: createdJobs.length,
-      skippedCount: skippedActive + skippedMissingFile,
+      skippedCount: skippedActive + skippedMissingFile + skippedOverLimit,
       alreadyIndexedCount: skippedAlreadyIndexed,
+      queueLimitReached: availableSlots <= 0,
       jobs: createdJobs,
     };
   }
@@ -396,6 +415,12 @@ export class IndexingQueueService {
         return;
       }
 
+      // 2b. Global concurrency safeguard: respect OCR_MAX_CONCURRENT_JOBS across all users
+      const maxGlobal = env.OCR_MAX_CONCURRENT_JOBS || 1;
+      if (this.userActiveJobMap.size >= maxGlobal) {
+        return;
+      }
+
       // 3. Find the oldest PENDING job for this user
       const nextJob = await prisma.ocrJob.findFirst({
         where: {
@@ -423,9 +448,12 @@ export class IndexingQueueService {
           console.error(`[IndexingQueueService] Unhandled error running job ${nextJob.id}:`, err);
         } finally {
           this.userActiveJobMap.delete(userId);
-          // Advance queue to next pending job if not paused
-          if (!this.isQueuePaused(userId)) {
-            this.processUserQueue(userId);
+          // Round-robin fair scheduling: give other waiting users priority to prevent starvation
+          const triggeredOther = await IndexingQueueService.triggerNextGlobalJob(userId);
+          const maxGlobal = env.OCR_MAX_CONCURRENT_JOBS || 1;
+          // If no other user was waiting or capacity remains, advance this user's queue
+          if ((!triggeredOther || IndexingQueueService.userActiveJobMap.size < maxGlobal) && !IndexingQueueService.isQueuePaused(userId)) {
+            IndexingQueueService.processUserQueue(userId);
           }
         }
       });
@@ -433,6 +461,56 @@ export class IndexingQueueService {
       console.error(`[IndexingQueueService] Error in processUserQueue for user ${userId}:`, err);
     } finally {
       this.userQueueProcessingLock.delete(userId);
+    }
+  }
+
+  /**
+   * Checks if any other user has pending jobs waiting for an available global OCR slot
+   * and triggers the earliest queued job across all users fairly (round-robin multi-tenant).
+   *
+   * @param {string|null} [excludeUserId=null] - User who just completed a job (to prioritize others)
+   * @returns {Promise<boolean>} True if a job was dispatched for another user
+   */
+  static async triggerNextGlobalJob(excludeUserId = null) {
+    const maxGlobal = env.OCR_MAX_CONCURRENT_JOBS || 1;
+    if (this.userActiveJobMap.size >= maxGlobal) {
+      return false;
+    }
+
+    try {
+      const activeUserIds = Array.from(this.userActiveJobMap.keys());
+      const excludeFilter = excludeUserId
+        ? Array.from(new Set([...activeUserIds, excludeUserId]))
+        : activeUserIds;
+
+      // 1. First priority: Find pending job for a user who does NOT have an active job and didn't just finish
+      let nextPending = await prisma.ocrJob.findFirst({
+        where: {
+          status: 'PENDING',
+          ...(excludeFilter.length > 0 ? { userId: { notIn: excludeFilter } } : {}),
+        },
+        orderBy: { createdAt: 'asc' },
+      });
+
+      // 2. Second priority: If no other user is waiting and excludeUserId has pending jobs, allow excludeUserId
+      if (!nextPending && excludeUserId && !activeUserIds.includes(excludeUserId)) {
+        nextPending = await prisma.ocrJob.findFirst({
+          where: {
+            status: 'PENDING',
+            userId: excludeUserId,
+          },
+          orderBy: { createdAt: 'asc' },
+        });
+      }
+
+      if (nextPending && !this.isQueuePaused(nextPending.userId)) {
+        this.processUserQueue(nextPending.userId);
+        return true;
+      }
+      return false;
+    } catch (err) {
+      console.error('[IndexingQueueService] Error triggering next global OCR job:', err.message);
+      return false;
     }
   }
 
@@ -447,11 +525,13 @@ export class IndexingQueueService {
       if (this.userActiveJobMap.get(userId) === jobId) {
         this.userActiveJobMap.delete(userId);
       }
-      if (!this.isQueuePaused(userId)) {
-        setImmediate(() => {
-          this.processUserQueue(userId);
-        });
-      }
+      setImmediate(async () => {
+        const triggeredOther = await IndexingQueueService.triggerNextGlobalJob(userId);
+        const maxGlobal = env.OCR_MAX_CONCURRENT_JOBS || 1;
+        if ((!triggeredOther || IndexingQueueService.userActiveJobMap.size < maxGlobal) && !IndexingQueueService.isQueuePaused(userId)) {
+          IndexingQueueService.processUserQueue(userId);
+        }
+      });
     }
   }
 

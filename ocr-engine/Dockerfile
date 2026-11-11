@@ -26,3 +26,4 @@ ENV PYTHONUNBUFFERED=1
 EXPOSE 5060
 
 CMD ["uvicorn", "src.api:app", "--host", "0.0.0.0", "--port", "5060"]
+

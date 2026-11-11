@@ -36,3 +36,4 @@ COPY --from=builder /app/storage ./storage
 EXPOSE 5050
 
 CMD ["node", "src/server.js"]
+

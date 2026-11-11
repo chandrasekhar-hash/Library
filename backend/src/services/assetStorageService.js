@@ -2,7 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import crypto from 'crypto';
 import { storagePaths } from '../config/storage.js';
-import { resolveSafeStoragePath, deleteStoredFile } from './storageService.js';
+import { resolveSafeStoragePath, deleteStoredFile, storageAdapter } from './storageService.js';
 
 /**
  * Service for private user asset storage (reading backgrounds, media).
@@ -245,25 +245,8 @@ export async function streamAssetToTempFile(fileStream, options = {}) {
  * @returns {Promise<{ storagePath: string, physicalPath: string, assetId: string }>}
  */
 export async function moveToPermanentAssetStorage(tempFilePath, userId, ext) {
-  const assetId = crypto.randomUUID();
-  const userDir = path.join(storagePaths.backgrounds, userId);
-
-  if (!fs.existsSync(userDir)) {
-    fs.mkdirSync(userDir, { recursive: true, mode: 0o700 });
-  }
-  try {
-    fs.chmodSync(userDir, 0o700);
-  } catch {}
-
-  const finalFilename = `${assetId}.${ext}`;
-  const physicalPath = path.join(userDir, finalFilename);
-
-  // Move temp file to final location
-  await fs.promises.rename(tempFilePath, physicalPath);
-  try {
-    fs.chmodSync(physicalPath, 0o600);
-  } catch {}
-
-  const storagePath = `backgrounds/${userId}/${finalFilename}`;
-  return { storagePath, physicalPath, assetId };
+  const result = await storageAdapter.savePermanentFile(tempFilePath, 'backgrounds', userId, ext);
+  const physicalPath = storageAdapter.isR2(result.storagePath) ? null : resolveSafeStoragePath(result.storagePath);
+  const assetId = path.basename(storageAdapter.cleanKey(result.storagePath), `.${ext}`);
+  return { storagePath: result.storagePath, physicalPath, assetId };
 }

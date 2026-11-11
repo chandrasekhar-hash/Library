@@ -93,3 +93,4 @@ volumes:
     name: aks-postgres-data
   pdf_storage:
     name: aks-pdf-storage
+

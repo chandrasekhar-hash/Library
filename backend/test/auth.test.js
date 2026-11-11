@@ -38,12 +38,13 @@ describe('Aks (अक्स) Authentication & Session System Test Suite', () => 
   after(async () => {
     // Clean up created test users
     if (testUserIds.length > 0) {
+      await prisma.session.deleteMany({
+        where: { userId: { in: testUserIds } },
+      }).catch(() => {});
       await prisma.user.deleteMany({
         where: { id: { in: testUserIds } },
       });
     }
-    // Clean up anonymous test sessions generated during test runs
-    await prisma.session.deleteMany();
     await new Promise((resolve) => server.close(resolve));
     await prisma.$disconnect();
   });

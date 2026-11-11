@@ -16,7 +16,7 @@ import { IndexingQueueService } from '../services/indexingQueueService.js';
  */
 export async function getLibraryIndexingStatus(req, res, next) {
   try {
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
     const status = await IndexingQueueService.getLibraryIndexingStatus(userId);
     return res.status(200).json(status);
   } catch (err) {

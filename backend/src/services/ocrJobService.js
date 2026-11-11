@@ -10,11 +10,16 @@
  * - Preserves raw text and bounding boxes independently of normalized search tokens
  */
 
+import fs from 'fs';
+import path from 'path';
+import { pipeline } from 'stream/promises';
 import { prisma } from './prisma.js';
-import { resolveSafeStoragePath } from './storageService.js';
+import { resolveSafeStoragePath, storageAdapter } from './storageService.js';
+import { storagePaths } from '../config/storage.js';
 import { NativeTextExtractor } from './nativeTextExtractor.js';
 import { ocrClient, OcrClientError } from './ocrClient.js';
 import { DevanagariSearchNormalizer } from '../utils/devanagariNormalizer.js';
+import { env } from '../config/env.js';
 
 // In-memory set of currently running job IDs in this Node process
 const activeRunningJobIds = new Set();
@@ -81,6 +86,23 @@ export class OcrJobService {
       throw err;
     }
 
+    // Safeguard 1: Maximum file size limit for OCR processing
+    if (book.file.fileSizeBytes > BigInt(env.MAX_PDF_SIZE_BYTES)) {
+      const limitMb = (env.MAX_PDF_SIZE_BYTES / (1024 * 1024)).toFixed(0);
+      const err = new Error(`Attached PDF file exceeds the maximum allowed OCR size limit of ${limitMb} MB.`);
+      err.statusCode = 400;
+      err.code = 'FILE_SIZE_LIMIT_EXCEEDED';
+      throw err;
+    }
+
+    // Safeguard 2: Maximum total pages limit for OCR processing
+    if (book.totalPages > env.MAX_OCR_PAGE_COUNT) {
+      const err = new Error(`Book exceeds maximum permitted OCR processing limit of ${env.MAX_OCR_PAGE_COUNT.toLocaleString()} pages.`);
+      err.statusCode = 400;
+      err.code = 'PAGE_LIMIT_EXCEEDED';
+      throw err;
+    }
+
     // 2. Check idempotency key if provided
     if (idempotencyKey && typeof idempotencyKey === 'string' && idempotencyKey.trim().length > 0) {
       const existingByIdempotency = await prisma.ocrJob.findUnique({
@@ -115,6 +137,21 @@ export class OcrJobService {
         job: sanitizeOcrJob(existingActiveJob),
         isExisting: true,
       };
+    }
+
+    // Safeguard 3: Maximum queued jobs per user limit
+    const activeJobCount = await prisma.ocrJob.count({
+      where: {
+        userId,
+        status: { in: ['PENDING', 'PROCESSING'] },
+      },
+    });
+
+    if (activeJobCount >= env.MAX_QUEUED_OCR_JOBS_PER_USER) {
+      const err = new Error(`Maximum queued OCR jobs limit (${env.MAX_QUEUED_OCR_JOBS_PER_USER}) reached. Please wait for current jobs to complete.`);
+      err.statusCode = 429;
+      err.code = 'OCR_QUEUE_LIMIT_EXCEEDED';
+      throw err;
     }
 
     // 4. Create new OcrJob record with PENDING status
@@ -156,6 +193,7 @@ export class OcrJobService {
     activeRunningJobIds.add(jobId);
 
     let job = null;
+    let cleanupTempFile = null;
     try {
       job = await prisma.ocrJob.findUnique({
         where: { id: jobId },
@@ -191,7 +229,24 @@ export class OcrJobService {
         },
       });
 
-      const pdfPath = resolveSafeStoragePath(job.book.file.storagePath);
+      let pdfPath;
+      if (storageAdapter.isR2(job.book.file.storagePath)) {
+        const tempFilename = `ocr_${job.id}_${Date.now()}.pdf`;
+        pdfPath = path.join(storagePaths.temp, tempFilename);
+        if (!fs.existsSync(storagePaths.temp)) {
+          fs.mkdirSync(storagePaths.temp, { recursive: true, mode: 0o700 });
+        }
+        const r2Stream = await storageAdapter.getStream(job.book.file.storagePath);
+        const writeStream = fs.createWriteStream(pdfPath, { mode: 0o600 });
+        await pipeline(r2Stream, writeStream);
+        cleanupTempFile = () => {
+          try {
+            if (fs.existsSync(pdfPath)) fs.unlinkSync(pdfPath);
+          } catch {}
+        };
+      } else {
+        pdfPath = resolveSafeStoragePath(job.book.file.storagePath);
+      }
 
       // Determine total pages
       let totalPages = job.totalPages;
@@ -480,6 +535,9 @@ export class OcrJobService {
         },
       });
     } finally {
+      if (cleanupTempFile) {
+        cleanupTempFile();
+      }
       activeRunningJobIds.delete(jobId);
       if (job?.userId) {
         import('./indexingQueueService.js').then(({ IndexingQueueService }) => {

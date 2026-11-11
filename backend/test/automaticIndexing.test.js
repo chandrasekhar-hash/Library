@@ -253,6 +253,11 @@ describe('Aks — Phase OCR-4A: Automatic Indexing & Coverage Verification Suite
     });
 
     assert.equal(res2.isExisting, true, 'Subsequent request recognized active job and refused duplication');
+
+    // Clean up simulated pending job so background worker does not try to process dummy.pdf
+    await prisma.ocrJob.deleteMany({
+      where: { bookId: book.id },
+    });
   });
 
   // ── 3. Native Text Pages Bypass OCR ─────────────────────────────────────────

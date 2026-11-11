@@ -1,6 +1,7 @@
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 generator client {
@@ -9,13 +10,15 @@ generator client {
 
 // ── 1. User & Account Management ───────────────────────────────────────────
 model User {
-  id           String   @id @default(uuid())
-  email        String   @unique
+  id           String    @id @default(uuid())
+  email        String    @unique
   passwordHash String
   name         String
+  role         UserRole  @default(USER)
   avatarUrl    String?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  mobileNumber String?   @unique
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
 
   // Relationships
   sessions        Session[]
@@ -33,7 +36,20 @@ model User {
   bookPageOcrs    BookPageOcr[]
   noteSections    NoteSection[]
 
+  // Owner/User Relationships (ACCOUNT-1A)
+  ownedRelationships  AccountRelationship[] @relation("OwnerToUserRelationships")
+  managedRelationship AccountRelationship?  @relation("UserToOwnerRelationship")
+
+  // Owner Access Contexts (ACCOUNT-1B)
+  initiatedOwnerAccess OwnerAccessContext[] @relation("OwnerAccessInitiator")
+  receivedOwnerAccess  OwnerAccessContext[] @relation("OwnerAccessTarget")
+
+  // Password Recovery (AUTH-3)
+  passwordRecoveryTokens PasswordRecoveryToken[]
+
   @@index([email])
+  @@index([mobileNumber])
+  @@index([role])
 }
 
 // ── 2. Session Store ────────────────────────────────────────────────────────
@@ -376,3 +392,81 @@ enum OcrPageSource {
   NATIVE
   OCR
 }
+
+// ── 15. Owner/User Account Hierarchy (ACCOUNT-1A) ───────────────────────────
+enum UserRole {
+  OWNER
+  USER
+}
+
+enum RelationshipStatus {
+  ACTIVE
+  REVOKED
+}
+
+model AccountRelationship {
+  id        String             @id @default(uuid())
+  ownerId   String
+  userId    String             @unique // A user can be linked to at most one owner in this initial design
+  status    RelationshipStatus @default(ACTIVE)
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+
+  owner User @relation("OwnerToUserRelationships", fields: [ownerId], references: [id], onDelete: Cascade)
+  user  User @relation("UserToOwnerRelationship", fields: [userId], references: [id], onDelete: Cascade)
+
+  accessContexts OwnerAccessContext[]
+
+  @@index([ownerId])
+  @@index([userId])
+  @@index([ownerId, status])
+}
+
+// ── 16. Owner Access Contexts & Audit Trail (ACCOUNT-1B) ──────────────────────
+enum OwnerAccessStatus {
+  ACTIVE
+  EXITED
+  EXPIRED
+  REVOKED
+}
+
+model OwnerAccessContext {
+  id               String            @id @default(uuid())
+  ownerId          String
+  targetUserId     String
+  relationshipId   String
+  ownerSessionId   String
+  status           OwnerAccessStatus @default(ACTIVE)
+  revocationReason String?
+  startedAt        DateTime          @default(now())
+  endedAt          DateTime?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+
+  owner        User                @relation("OwnerAccessInitiator", fields: [ownerId], references: [id], onDelete: Cascade)
+  targetUser   User                @relation("OwnerAccessTarget", fields: [targetUserId], references: [id], onDelete: Cascade)
+  relationship AccountRelationship @relation(fields: [relationshipId], references: [id], onDelete: Cascade)
+
+  @@index([ownerId])
+  @@index([targetUserId])
+  @@index([ownerSessionId])
+  @@index([relationshipId])
+  @@index([status])
+  @@index([ownerId, status])
+}
+
+// ── 17. Password Recovery Tokens (AUTH-3) ──────────────────────────────────
+model PasswordRecoveryToken {
+  id        String    @id @default(uuid())
+  userId    String
+  tokenHash String    @unique
+  expiresAt DateTime
+  usedAt    DateTime?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+

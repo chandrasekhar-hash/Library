@@ -25,15 +25,15 @@ export const DEFAULT_SECTIONS = [
  */
 export async function listSections(req, res, next) {
   try {
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
 
     let sections = await prisma.noteSection.findMany({
       where: { userId },
       orderBy: [{ order: 'asc' }, { createdAt: 'asc' }],
     });
 
-    // Auto-seed defaults if brand new user
-    if (sections.length === 0) {
+    // Auto-seed defaults if brand new user and not in read-only owner access
+    if (sections.length === 0 && !req.ownerAccessContext) {
       for (let i = 0; i < DEFAULT_SECTIONS.length; i++) {
         const def = DEFAULT_SECTIONS[i];
         await prisma.noteSection.upsert({

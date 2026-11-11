@@ -2,6 +2,7 @@ import { prisma } from '../services/prisma.js';
 import { deleteStoredFile } from '../services/storageService.js';
 import { isValidUuid, parsePagination } from '../utils/validators.js';
 import { withBookLock } from '../utils/bookLock.js';
+import { withUserLock } from '../utils/userLock.js';
 
 const VALID_BOOK_STATUSES = ['UNREAD', 'IN_PROGRESS', 'FINISHED'];
 const VALID_SORT_FIELDS = ['title', 'author', 'createdAt', 'updatedAt', 'status'];
@@ -218,7 +219,7 @@ export async function createBook(req, res, next) {
  */
 export async function listBooks(req, res, next) {
   try {
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
     const { page, limit, skip } = parsePagination(req.query);
 
     const where = { userId };
@@ -316,7 +317,7 @@ export async function listBooks(req, res, next) {
 export async function getBook(req, res, next) {
   try {
     const { bookId } = req.params;
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
 
     if (!isValidUuid(bookId)) {
       return res.status(400).json({
@@ -553,48 +554,50 @@ export async function deleteBook(req, res, next) {
     }
 
     return await withBookLock(bookId, async () => {
-      // 1. Re-read the latest book/file state inside the lock before deleting
-      const book = await prisma.book.findFirst({
-        where: { id: bookId, userId },
-        include: { file: true },
-      });
+      return await withUserLock(userId, async () => {
+        // 1. Re-read the latest book/file state inside the lock before deleting
+        const book = await prisma.book.findFirst({
+          where: { id: bookId, userId },
+          include: { file: true },
+        });
 
-      if (!book) {
-        return res.status(404).json({
-          error: {
-            message: 'Book not found or access denied.',
-            code: 'BOOK_NOT_FOUND',
+        if (!book) {
+          return res.status(404).json({
+            error: {
+              message: 'Book not found or access denied.',
+              code: 'BOOK_NOT_FOUND',
+            },
+          });
+        }
+
+        const physicalStoragePath = book.file?.storagePath || null;
+
+        // 2. Perform database deletion first (cascades to BookFile, ReadingProgress, Bookmarks, Highlights, etc.)
+        await prisma.book.delete({
+          where: {
+            id_userId: {
+              id: bookId,
+              userId,
+            },
           },
         });
-      }
 
-      const physicalStoragePath = book.file?.storagePath || null;
-
-      // 2. Perform database deletion first (cascades to BookFile, ReadingProgress, Bookmarks, Highlights, etc.)
-      await prisma.book.delete({
-        where: {
-          id_userId: {
-            id: bookId,
-            userId,
-          },
-        },
-      });
-
-      // 3. Post-commit physical file cleanup (only after DB deletion succeeds)
-      if (physicalStoragePath) {
-        try {
-          await deleteStoredFile(physicalStoragePath);
-        } catch (fileErr) {
-          console.error(
-            `[BookDeletion] Database deletion succeeded for book ${bookId}, but physical file cleanup failed for path ${physicalStoragePath}:`,
-            fileErr.message
-          );
+        // 3. Post-commit physical file cleanup (only after DB deletion succeeds)
+        if (physicalStoragePath) {
+          try {
+            await deleteStoredFile(physicalStoragePath);
+          } catch (fileErr) {
+            console.error(
+              `[BookDeletion] Database deletion succeeded for book ${bookId}, but physical file cleanup failed for path ${physicalStoragePath}:`,
+              fileErr.message
+            );
+          }
         }
-      }
 
-      return res.status(200).json({
-        message: 'Book and associated data deleted successfully.',
-        id: bookId,
+        return res.status(200).json({
+          message: 'Book and associated data deleted successfully.',
+          id: bookId,
+        });
       });
     });
   } catch (err) {

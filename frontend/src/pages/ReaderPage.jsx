@@ -40,6 +40,7 @@ import DocumentSearch from '../components/reader/DocumentSearch';
 import PdfContinuousViewer from '../components/reader/PdfContinuousViewer';
 import PeacockBookmark from '../components/reader/PeacockBookmark';
 import { useLibrary } from '../context/LibraryContext';
+import { useAuth } from '../context/AuthContext';
 import {
   loadPdfDocument,
   evictPdfCache,
@@ -117,6 +118,7 @@ export default function ReaderPage({
 
   const [changeCoverOpen, setChangeCoverOpen] = useState(false);
   const [bookmarkHistoryOpen, setBookmarkHistoryOpen] = useState(false);
+  const { isOwnerViewingAccount } = useAuth();
 
   // ── Effective preferences (Global merged with Book Overrides) ──────────────
   const [prefVersion, setPrefVersion] = useState(0);
@@ -159,7 +161,7 @@ export default function ReaderPage({
 
   // ── Persistent Study Time Tracking (Active Reading Only) ─────────────────
   useStudyTimer({
-    isReading: Boolean(book && (loadState === 'ready' || loadState === 'no-blob')),
+    isReading: Boolean(!isOwnerViewingAccount && book && (loadState === 'ready' || loadState === 'no-blob')),
   });
 
   // ── Reader state ───────────────────────────────────────────────────────────
@@ -336,7 +338,7 @@ export default function ReaderPage({
   const debouncedSaveProgress = useMemo(
     () =>
       debounce(async (bookId, page) => {
-        if (!bookId || !isSaved) return;
+        if (!bookId || !isSaved || isOwnerViewingAccount) return;
         try {
           await saveReadingProgress(bookId, page);
           if (onUpdateProgress) onUpdateProgress(bookId, page);
@@ -344,7 +346,7 @@ export default function ReaderPage({
           console.warn('[ReaderPage] Progress save failed:', err);
         }
       }, 800),
-    [isSaved, onUpdateProgress]
+    [isSaved, onUpdateProgress, isOwnerViewingAccount]
   );
 
   // ── Page change ────────────────────────────────────────────────────────────

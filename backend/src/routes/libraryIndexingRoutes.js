@@ -5,6 +5,7 @@
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth.js';
 import { validateCsrf } from '../middleware/csrf.js';
+import { ocrDispatchRateLimiter } from '../middleware/rateLimiter.js';
 import {
   getLibraryIndexingStatus,
   startLibraryIndexing,
@@ -19,10 +20,10 @@ const router = Router();
 router.use(requireAuth);
 
 router.get('/status', getLibraryIndexingStatus);
-router.post('/start', validateCsrf, startLibraryIndexing);
+router.post('/start', ocrDispatchRateLimiter, validateCsrf, startLibraryIndexing);
 router.post('/pause', validateCsrf, pauseLibraryIndexing);
 router.post('/resume', validateCsrf, resumeLibraryIndexing);
-router.post('/retry-failed', validateCsrf, retryFailedLibraryIndexing);
+router.post('/retry-failed', ocrDispatchRateLimiter, validateCsrf, retryFailedLibraryIndexing);
 
 export default router;
 

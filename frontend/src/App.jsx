@@ -6,6 +6,7 @@ import Library from './pages/Library';
 import CustomBackground from './components/CustomBackground';
 import AksLoginPage from './components/auth/AksLoginPage';
 import MigrationBanner from './components/migration/MigrationBanner';
+import OwnerAccessBanner from './components/auth/OwnerAccessBanner';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { LibraryProvider, useLibrary } from './context/LibraryContext';
 
@@ -427,6 +428,13 @@ function AppContent({ toastMessage, showToast }) {
             <MigrationBanner
               currentUser={currentUser}
               onOpenMigration={() => setIsMigrationModalOpen(true)}
+            />
+
+            {/* Owner-Authorized Account Access Persistent Banner */}
+            <OwnerAccessBanner
+              onExited={() => {
+                showToast('Exited owner access. Returned to your Sanctuary.');
+              }}
             />
 
             <main className="main-content-scroll" id="main-content">

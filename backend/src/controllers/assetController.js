@@ -2,9 +2,11 @@ import fs from 'fs';
 import busboy from 'busboy';
 import { prisma } from '../services/prisma.js';
 import { isValidUuid } from '../utils/validators.js';
-import { sanitizeFilename, resolveSafeStoragePath, deleteStoredFile } from '../services/storageService.js';
+import { sanitizeFilename, resolveSafeStoragePath, deleteStoredFile, storageAdapter } from '../services/storageService.js';
 import { streamAssetToTempFile, moveToPermanentAssetStorage } from '../services/assetStorageService.js';
 import { withUserLock } from '../utils/userLock.js';
+import { QuotaService } from '../services/quotaService.js';
+import { env } from '../config/env.js';
 
 function sanitizeAsset(asset) {
   if (!asset) return null;
@@ -35,6 +37,17 @@ export async function uploadBackgroundAsset(req, res, next) {
       error: {
         message: 'Invalid request content type. Expected multipart/form-data.',
         code: 'INVALID_CONTENT_TYPE',
+      },
+    });
+  }
+
+  // Fast-fail early check on Content-Length header if provided
+  const declaredLength = parseInt(req.headers['content-length'] || '0', 10);
+  if (declaredLength > env.MAX_ASSET_SIZE_BYTES) {
+    return res.status(413).json({
+      error: {
+        message: 'Asset exceeds maximum permitted size of 50 MB.',
+        code: 'FILE_TOO_LARGE',
       },
     });
   }
@@ -105,28 +118,33 @@ export async function uploadBackgroundAsset(req, res, next) {
         tempFilePath = streamResult.tempFilePath;
         const { bytesWritten, sha256, mimeType, ext, assetType } = streamResult;
 
-        // Move to permanent private storage under backgrounds/<userId>/<uuid>.<ext>
-        const moveRes = await moveToPermanentAssetStorage(tempFilePath, userId, ext);
-        newStoragePath = moveRes.storagePath;
-        const assetId = moveRes.assetId;
+        const assetRecord = await withUserLock(userId, async () => {
+          // Assert account storage quota against trusted server-measured bytesWritten
+          await QuotaService.assertQuotaAvailable(userId, bytesWritten);
 
-        // Save UserAsset in database
-        const assetRecord = await prisma.userAsset.create({
-          data: {
-            id: assetId,
-            userId,
-            assetType,
-            storagePath: newStoragePath,
-            filename: originalFilename,
-            mimeType,
-            sizeBytes: BigInt(bytesWritten),
-            isActive: true,
-            metadata: {
-              originalFilename,
-              detectedMimeType: mimeType,
-              sha256,
+          // Move to permanent private storage under backgrounds/<userId>/<uuid>.<ext>
+          const moveRes = await moveToPermanentAssetStorage(tempFilePath, userId, ext);
+          newStoragePath = moveRes.storagePath;
+          const assetId = moveRes.assetId;
+
+          // Save UserAsset in database
+          return await prisma.userAsset.create({
+            data: {
+              id: assetId,
+              userId,
+              assetType,
+              storagePath: newStoragePath,
+              filename: originalFilename,
+              mimeType,
+              sizeBytes: BigInt(bytesWritten),
+              isActive: true,
+              metadata: {
+                originalFilename,
+                detectedMimeType: mimeType,
+                sha256,
+              },
             },
-          },
+          });
         });
 
         return res.status(201).json({
@@ -176,7 +194,7 @@ export async function uploadBackgroundAsset(req, res, next) {
  */
 export async function listAssets(req, res, next) {
   try {
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
     const { type } = req.query;
 
     const where = { userId, isActive: true };
@@ -204,7 +222,7 @@ export async function listAssets(req, res, next) {
 export async function getAssetMetadata(req, res, next) {
   try {
     const { assetId } = req.params;
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
 
     if (!isValidUuid(assetId)) {
       return res.status(400).json({
@@ -243,7 +261,7 @@ export async function getAssetMetadata(req, res, next) {
 export async function streamAssetFile(req, res, next) {
   try {
     const { assetId } = req.params;
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
 
     if (!isValidUuid(assetId)) {
       return res.status(400).json({
@@ -267,82 +285,11 @@ export async function streamAssetFile(req, res, next) {
       });
     }
 
-    const filePath = resolveSafeStoragePath(asset.storagePath);
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({
-        error: {
-          message: 'Asset storage file missing on disk.',
-          code: 'STORAGE_FILE_MISSING',
-        },
-      });
-    }
-
-    const stat = await fs.promises.stat(filePath);
-    const totalSize = stat.size;
-    const rangeHeader = req.headers.range;
-
-    if (rangeHeader) {
-      const match = rangeHeader.match(/^bytes=(\d*)-(\d*)$/);
-      if (!match) {
-        res.setHeader('Content-Range', `bytes */${totalSize}`);
-        return res.status(416).json({
-          error: {
-            message: 'Requested Range Not Satisfiable.',
-            code: 'RANGE_NOT_SATISFIABLE',
-          },
-        });
-      }
-
-      let start = match[1] ? parseInt(match[1], 10) : undefined;
-      let end = match[2] ? parseInt(match[2], 10) : undefined;
-
-      if (start === undefined && end !== undefined) {
-        start = Math.max(0, totalSize - end);
-        end = totalSize - 1;
-      } else if (start !== undefined && end === undefined) {
-        end = totalSize - 1;
-      }
-
-      if (start === undefined || end === undefined || start >= totalSize || start > end) {
-        res.setHeader('Content-Range', `bytes */${totalSize}`);
-        return res.status(416).json({
-          error: {
-            message: 'Requested Range Not Satisfiable.',
-            code: 'RANGE_NOT_SATISFIABLE',
-          },
-        });
-      }
-
-      if (end >= totalSize) {
-        end = totalSize - 1;
-      }
-
-      const chunkSize = end - start + 1;
-      res.status(206);
-      res.setHeader('Content-Range', `bytes ${start}-${end}/${totalSize}`);
-      res.setHeader('Accept-Ranges', 'bytes');
-      res.setHeader('Content-Length', chunkSize);
-      res.setHeader('Content-Type', asset.mimeType);
-      res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(asset.filename)}"`);
-
-      const fileStream = fs.createReadStream(filePath, { start, end });
-      fileStream.on('error', (err) => {
-        if (!res.headersSent) next(err);
-      });
-      fileStream.pipe(res);
-    } else {
-      res.status(200);
-      res.setHeader('Content-Type', asset.mimeType);
-      res.setHeader('Content-Length', totalSize);
-      res.setHeader('Accept-Ranges', 'bytes');
-      res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(asset.filename)}"`);
-
-      const fileStream = fs.createReadStream(filePath);
-      fileStream.on('error', (err) => {
-        if (!res.headersSent) next(err);
-      });
-      fileStream.pipe(res);
-    }
+    return storageAdapter.streamRangeResponse(req, res, next, {
+      storagePath: asset.storagePath,
+      filename: asset.filename,
+      mimeType: asset.mimeType,
+    });
   } catch (err) {
     next(err);
   }

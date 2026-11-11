@@ -34,6 +34,7 @@ import {
 } from '../services/sanctuaryDataService';
 import PersonalNotesView from '../components/notes/PersonalNotesView';
 import ReadingNotesView from '../components/notes/ReadingNotesView';
+import { useAuth } from '../context/AuthContext';
 import '../styles/notes.css';
 
 export default function NotesPage({
@@ -41,6 +42,7 @@ export default function NotesPage({
   onOpenBook,
   onNavigateTo,
 }) {
+  const { isOwnerViewingAccount } = useAuth();
   // Top-level workspace tab: 'personal' | 'reading'
   const [activeTab, setActiveTab] = useState('personal');
 
@@ -288,16 +290,17 @@ export default function NotesPage({
             selectedNote={activePersonalNote}
             selectedNoteId={selectedPersonalNoteId}
             onSelectNote={setSelectedPersonalNoteId}
-            onCreateNote={handleCreateNote}
-            onUpdateNote={handleUpdateNote}
-            onDeleteNote={setDeletingNote}
-            onCreateSection={handleCreateSection}
-            onUpdateSection={handleUpdateSection}
-            onDeleteSection={handleDeleteSection}
-            saveStatus={saveStatus}
+            onCreateNote={isOwnerViewingAccount ? null : handleCreateNote}
+            onUpdateNote={isOwnerViewingAccount ? null : handleUpdateNote}
+            onDeleteNote={isOwnerViewingAccount ? null : setDeletingNote}
+            onCreateSection={isOwnerViewingAccount ? null : handleCreateSection}
+            onUpdateSection={isOwnerViewingAccount ? null : handleUpdateSection}
+            onDeleteSection={isOwnerViewingAccount ? null : handleDeleteSection}
+            saveStatus={isOwnerViewingAccount ? 'saved' : saveStatus}
             lastSavedTime={lastSavedTime}
+            isReadOnly={isOwnerViewingAccount}
             onManualSaveRetry={() => {
-              if (selectedPersonalNoteId) {
+              if (selectedPersonalNoteId && !isOwnerViewingAccount) {
                 handleUpdateNote(selectedPersonalNoteId, {});
               }
             }}
@@ -309,13 +312,14 @@ export default function NotesPage({
             selectedNote={activeReadingNote}
             selectedNoteId={selectedReadingNoteId}
             onSelectNote={setSelectedReadingNoteId}
-            onCreateNote={handleCreateNote}
-            onUpdateNote={handleUpdateNote}
-            onDeleteNote={setDeletingNote}
+            onCreateNote={isOwnerViewingAccount ? null : handleCreateNote}
+            onUpdateNote={isOwnerViewingAccount ? null : handleUpdateNote}
+            onDeleteNote={isOwnerViewingAccount ? null : setDeletingNote}
             onOpenBook={onOpenBook}
-            saveStatus={saveStatus}
+            saveStatus={isOwnerViewingAccount ? 'saved' : saveStatus}
+            isReadOnly={isOwnerViewingAccount}
             onManualSaveRetry={() => {
-              if (selectedReadingNoteId) {
+              if (selectedReadingNoteId && !isOwnerViewingAccount) {
                 handleUpdateNote(selectedReadingNoteId, {});
               }
             }}

@@ -87,11 +87,13 @@ describe('ISSUE-SEC-01: Session Store Persistence & Reliability Suite', () => {
 
   after(async () => {
     if (createdUserIds.length > 0) {
+      await prisma.session.deleteMany({
+        where: { userId: { in: createdUserIds } },
+      }).catch(() => {});
       await prisma.user.deleteMany({
         where: { id: { in: createdUserIds } },
       });
     }
-    await prisma.session.deleteMany();
     await new Promise((resolve) => server.close(resolve));
     await prisma.$disconnect();
   });

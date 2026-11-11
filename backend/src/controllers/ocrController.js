@@ -51,7 +51,7 @@ export async function requestBookOcr(req, res, next) {
 export async function getBookOcrStatus(req, res, next) {
   try {
     const { bookId } = req.params;
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
 
     const status = await OcrJobService.getBookOcrStatus(bookId, userId);
     return res.status(200).json(status);
@@ -68,7 +68,7 @@ export async function getBookOcrStatus(req, res, next) {
 export async function getOcrJob(req, res, next) {
   try {
     const { jobId } = req.params;
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
 
     const job = await OcrJobService.getJobStatus(jobId, userId);
     return res.status(200).json({ job });
@@ -84,7 +84,7 @@ export async function getOcrJob(req, res, next) {
 export async function listBookPagesOcr(req, res, next) {
   try {
     const { bookId } = req.params;
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
 
     const pages = await OcrJobService.listBookPagesOcr(bookId, userId);
     return res.status(200).json({
@@ -104,7 +104,7 @@ export async function listBookPagesOcr(req, res, next) {
 export async function getBookPageOcr(req, res, next) {
   try {
     const { bookId, pageNumber } = req.params;
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
 
     const pageOcr = await OcrJobService.getBookPageOcr(bookId, pageNumber, userId);
     return res.status(200).json({ page: pageOcr });

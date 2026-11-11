@@ -222,7 +222,7 @@ export async function createNote(req, res, next) {
  */
 export async function listNotes(req, res, next) {
   try {
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
     const { page, limit, skip } = parsePagination(req.query);
 
     const where = { userId };
@@ -354,7 +354,7 @@ export async function listNotes(req, res, next) {
 export async function getNote(req, res, next) {
   try {
     const { noteId } = req.params;
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
 
     if (!isValidUuid(noteId)) {
       return res.status(400).json({

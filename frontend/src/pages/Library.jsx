@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import BookCover from '../components/BookCover';
 import LibraryIndexingDrawer from '../components/library/LibraryIndexingDrawer';
+import { useAuth } from '../context/AuthContext';
 import {
   calculateProgress,
   LIBRARY_CATEGORIES,
@@ -43,6 +44,7 @@ export default function Library({
   const [viewMode, setViewMode] = useState('grid'); // 'grid' | 'list'
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const [isIndexingDrawerOpen, setIsIndexingDrawerOpen] = useState(false);
+  const { isOwnerViewingAccount } = useAuth();
 
   // Derive available categories dynamically from imported books
   const availableCategories = useMemo(() => {
@@ -160,14 +162,33 @@ export default function Library({
             <span>Search Index</span>
           </button>
 
-          {/* Prominent + Import Book button */}
-          <button
-            className="btn-primary import-action-btn"
-            onClick={onTriggerImport}
-          >
-            <Upload size={17} />
-            <span>+ Import Book</span>
-          </button>
+          {/* Prominent + Import Book button (hidden when in read-only owner access) */}
+          {!isOwnerViewingAccount ? (
+            <button
+              className="btn-primary import-action-btn"
+              onClick={onTriggerImport}
+            >
+              <Upload size={17} />
+              <span>+ Import Book</span>
+            </button>
+          ) : (
+            <span
+              style={{
+                fontSize: '0.75rem',
+                fontWeight: 600,
+                padding: '6px 12px',
+                borderRadius: '6px',
+                backgroundColor: 'rgba(245, 158, 11, 0.15)',
+                color: '#fbbf24',
+                border: '1px solid rgba(245, 158, 11, 0.3)',
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: '6px',
+              }}
+            >
+              Read-Only View
+            </span>
+          )}
 
           {/* Grid and List view toggle */}
           <div className="view-toggle-group" role="radiogroup" aria-label="Layout view mode">

@@ -293,7 +293,7 @@ export async function finishReadingSession(req, res, next) {
  */
 export async function getActiveSession(req, res, next) {
   try {
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
     const { bookId } = req.params;
 
     const where = { userId, endedAt: null };
@@ -531,7 +531,7 @@ export async function createReadingSession(req, res, next) {
  */
 export async function getStudyStatistics(req, res, next) {
   try {
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
 
     // 1. Parallelize user preference, all-time aggregate, and 7-day daily window queries
     const sevenDaysAgo = new Date();
@@ -669,7 +669,7 @@ export async function getStudyStatistics(req, res, next) {
  */
 export async function listReadingSessions(req, res, next) {
   try {
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
     const { page, limit, skip } = parsePagination(req.query, { defaultLimit: 20, maxLimit: 100 });
     const { bookId, includeHistorical, status } = req.query;
 

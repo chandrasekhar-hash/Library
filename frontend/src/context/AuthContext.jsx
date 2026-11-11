@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useMemo } from 'react';
-import { authApi, setUnauthorizedHandler } from '../services/api';
-import { setSanctuaryAuthUser } from '../services/sanctuaryDataService';
+import { authApi, ownerAccessApi, setUnauthorizedHandler } from '../services/api';
+import { setSanctuaryAuthUser, notifyDataChanged } from '../services/sanctuaryDataService';
 import { syncGlobalPreferencesFromServer } from '../services/preferencesService';
 
 const AuthContext = createContext(null);
@@ -28,6 +28,7 @@ export function AuthProvider({ children, onSessionExpired = null }) {
   });
 
   const [isAuthChecking, setIsAuthChecking] = useState(true);
+  const [ownerAccessContext, setOwnerAccessContext] = useState(null);
 
   // Synchronize state with backend session on mount
   useEffect(() => {
@@ -47,8 +48,26 @@ export function AuthProvider({ children, onSessionExpired = null }) {
             localStorage.setItem('aks_auth_user', JSON.stringify(user));
           } catch (_) {}
           syncGlobalPreferencesFromServer().catch(() => {});
+
+          if (user.role === 'OWNER') {
+            ownerAccessApi
+              .getCurrentOwnerAccess()
+              .then((accessData) => {
+                if (isMounted && accessData?.active) {
+                  setOwnerAccessContext(accessData.accessContext);
+                } else if (isMounted) {
+                  setOwnerAccessContext(null);
+                }
+              })
+              .catch(() => {
+                if (isMounted) setOwnerAccessContext(null);
+              });
+          } else {
+            setOwnerAccessContext(null);
+          }
         } else {
           setCurrentUser(null);
+          setOwnerAccessContext(null);
           setSanctuaryAuthUser(null);
           const guestActive =
             localStorage.getItem('aks_guest_mode') === 'true' ||
@@ -59,6 +78,7 @@ export function AuthProvider({ children, onSessionExpired = null }) {
       .catch(() => {
         if (!isMounted) return;
         setCurrentUser(null);
+        setOwnerAccessContext(null);
         setSanctuaryAuthUser(null);
         const guestActive =
           localStorage.getItem('aks_guest_mode') === 'true' ||
@@ -150,6 +170,17 @@ export function AuthProvider({ children, onSessionExpired = null }) {
     syncGlobalPreferencesFromServer().catch(() => {});
   }, []);
 
+  const updateUser = useCallback((updatedFields) => {
+    setCurrentUser((prev) => {
+      if (!prev) return prev;
+      const nextUser = { ...prev, ...updatedFields };
+      try {
+        localStorage.setItem('aks_auth_user', JSON.stringify(nextUser));
+      } catch (_) {}
+      return nextUser;
+    });
+  }, []);
+
   const logout = useCallback(async () => {
     try {
       await authApi.logout();
@@ -161,7 +192,27 @@ export function AuthProvider({ children, onSessionExpired = null }) {
     } catch (_) {}
     setSanctuaryAuthUser(null);
     setCurrentUser(null);
+    setOwnerAccessContext(null);
     setIsGuest(false);
+  }, []);
+
+  const startOwnerAccess = useCallback(async (targetUserId) => {
+    const res = await ownerAccessApi.startOwnerAccess(targetUserId);
+    if (res?.accessContext) {
+      setOwnerAccessContext(res.accessContext);
+      notifyDataChanged('books');
+      notifyDataChanged('notes');
+    }
+    return res;
+  }, []);
+
+  const exitOwnerAccess = useCallback(async () => {
+    try {
+      await ownerAccessApi.exitOwnerAccess();
+    } catch (_) {}
+    setOwnerAccessContext(null);
+    notifyDataChanged('books');
+    notifyDataChanged('notes');
   }, []);
 
   const exploreAsGuest = useCallback(() => {
@@ -170,6 +221,7 @@ export function AuthProvider({ children, onSessionExpired = null }) {
       sessionStorage.setItem('aks_guest_mode', 'true');
     } catch (_) {}
     setCurrentUser(null);
+    setOwnerAccessContext(null);
     setSanctuaryAuthUser(null);
     setIsGuest(true);
   }, []);
@@ -180,11 +232,27 @@ export function AuthProvider({ children, onSessionExpired = null }) {
       isGuest,
       isAuthChecking,
       isAuthenticated: Boolean(currentUser),
+      ownerAccessContext,
+      isOwnerViewingAccount: Boolean(ownerAccessContext),
+      startOwnerAccess,
+      exitOwnerAccess,
       login,
+      updateUser,
       logout,
       exploreAsGuest,
     }),
-    [currentUser, isGuest, isAuthChecking, login, logout, exploreAsGuest]
+    [
+      currentUser,
+      isGuest,
+      isAuthChecking,
+      ownerAccessContext,
+      startOwnerAccess,
+      exitOwnerAccess,
+      login,
+      updateUser,
+      logout,
+      exploreAsGuest,
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

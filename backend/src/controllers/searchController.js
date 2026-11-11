@@ -14,7 +14,7 @@ import { SearchEngine } from '../services/searchEngine.js';
 export async function searchBook(req, res, next) {
   try {
     const { bookId } = req.params;
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
     const { q: query, page, limit, mode } = req.query;
 
     if (!query || typeof query !== 'string' || query.trim().length === 0) {

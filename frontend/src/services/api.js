@@ -196,12 +196,15 @@ export async function apiRequest(endpoint, options = {}) {
 export const authApi = {
   getCsrfToken: () => fetchCsrfToken(),
   
-  register: async ({ email, password, name }) => {
+  register: async ({ email, password, name, mobileNumber, rememberMe = true }) => {
     clearCsrfToken();
     const data = await apiRequest('/api/auth/register', {
       method: 'POST',
-      body: JSON.stringify({ email, password, name }),
+      body: JSON.stringify({ email, password, name, mobileNumber, rememberMe }),
     });
+    if (data?.csrfToken) {
+      cachedCsrfToken = data.csrfToken;
+    }
     return data;
   },
 
@@ -211,7 +214,31 @@ export const authApi = {
       method: 'POST',
       body: JSON.stringify({ email, password, rememberMe }),
     });
+    if (data?.csrfToken) {
+      cachedCsrfToken = data.csrfToken;
+    }
     return data;
+  },
+
+  verifyRecovery: async ({ email, mobileNumber }) => {
+    return apiRequest('/api/auth/recovery/verify', {
+      method: 'POST',
+      body: JSON.stringify({ email, mobileNumber }),
+    });
+  },
+
+  resetPassword: async ({ recoveryToken, newPassword, confirmPassword }) => {
+    return apiRequest('/api/auth/recovery/reset', {
+      method: 'POST',
+      body: JSON.stringify({ recoveryToken, newPassword, confirmPassword }),
+    });
+  },
+
+  updateProfile: async ({ mobileNumber }) => {
+    return apiRequest('/api/auth/profile', {
+      method: 'PATCH',
+      body: JSON.stringify({ mobileNumber }),
+    });
   },
 
   getCurrentUser: async () => {
@@ -634,4 +661,52 @@ export const libraryIndexingApi = {
   pause: () => booksApi.pauseLibraryIndexing(),
   resume: () => booksApi.resumeLibraryIndexing(),
   retryFailed: () => booksApi.retryFailedLibraryIndexing(),
+};
+
+// ── Linked Accounts & Owner Relationships (Phase ACCOUNT-1A) ─────────────
+export const accountRelationshipsApi = {
+  listLinkedUsers: async () => {
+    return apiRequest('/api/account/relationships');
+  },
+
+  linkUser: async ({ targetEmail, targetUserId }) => {
+    return apiRequest('/api/account/relationships', {
+      method: 'POST',
+      body: JSON.stringify({ targetEmail, targetUserId }),
+    });
+  },
+
+  revokeRelationship: async (targetUserId) => {
+    return apiRequest(`/api/account/relationships/${targetUserId}`, {
+      method: 'DELETE',
+    });
+  },
+};
+
+// ── Owner-Authorized Account Access (Phase ACCOUNT-1B) ───────────────────
+export const ownerAccessApi = {
+  startOwnerAccess: async (targetUserId) => {
+    return apiRequest('/api/account/owner-access/start', {
+      method: 'POST',
+      body: JSON.stringify({ targetUserId }),
+    });
+  },
+
+  getCurrentOwnerAccess: async () => {
+    return apiRequest('/api/account/owner-access/current');
+  },
+
+  exitOwnerAccess: async () => {
+    return apiRequest('/api/account/owner-access/exit', {
+      method: 'POST',
+    });
+  },
+
+  getAccessHistory: async (params = {}) => {
+    const query = new URLSearchParams();
+    if (params.page) query.set('page', params.page);
+    if (params.limit) query.set('limit', params.limit);
+    const qs = query.toString();
+    return apiRequest(`/api/account/owner-access/history${qs ? `?${qs}` : ''}`);
+  },
 };

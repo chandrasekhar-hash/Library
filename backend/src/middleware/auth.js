@@ -1,4 +1,6 @@
 import { prisma } from '../services/prisma.js';
+import { resolveOwnerAccess, enforceOwnerAccessReadOnly } from './ownerAccessMiddleware.js';
+import { maskMobileNumber } from '../utils/validators.js';
 
 /**
  * Reusable Authentication Middleware for Aks (अक्स)
@@ -32,6 +34,8 @@ export async function requireAuth(req, res, next) {
         id: true,
         name: true,
         email: true,
+        role: true,
+        mobileNumber: true,
         createdAt: true,
       },
     });
@@ -47,11 +51,22 @@ export async function requireAuth(req, res, next) {
       });
     }
 
-    // Attach verified user identity
+    // Attach verified user identity and role (with safe masked mobile metadata)
     req.userId = user.id;
-    req.user = user;
+    req.user = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      hasMobileNumber: Boolean(user.mobileNumber),
+      mobileNumberMasked: maskMobileNumber(user.mobileNumber),
+      createdAt: user.createdAt,
+    };
+    req.userRole = user.role;
 
-    return next();
+    return resolveOwnerAccess(req, res, () => {
+      enforceOwnerAccessReadOnly(req, res, next);
+    });
   } catch (err) {
     console.error('[AuthMiddleware] Error during session authentication:', err);
     return res.status(500).json({
@@ -84,10 +99,50 @@ export async function optionalAuth(req, res, next) {
       if (user) {
         req.userId = user.id;
         req.user = user;
+        req.userRole = user.role;
+        return resolveOwnerAccess(req, res, next);
       }
     }
+    req.resourceUserId = null;
+    req.ownerAccessContext = null;
     return next();
   } catch {
     return next();
   }
 }
+
+/**
+ * Middleware factory enforcing specific role permissions.
+ *
+ * @param {...string} allowedRoles - E.g. 'OWNER', 'USER'
+ * @returns {Function} Express middleware
+ */
+export function requireRole(...allowedRoles) {
+  return (req, res, next) => {
+    if (!req.user || !req.userId) {
+      return res.status(401).json({
+        error: {
+          message: 'Authentication required. Please log in to continue.',
+          code: 'UNAUTHENTICATED',
+        },
+      });
+    }
+
+    if (!allowedRoles.includes(req.user.role)) {
+      return res.status(403).json({
+        error: {
+          message: 'Access denied. Insufficient role permissions.',
+          code: 'FORBIDDEN_ROLE_REQUIRED',
+          requiredRoles: allowedRoles,
+        },
+      });
+    }
+
+    return next();
+  };
+}
+
+/**
+ * Convenience middleware requiring the authenticated user to possess the OWNER role.
+ */
+export const requireOwner = requireRole('OWNER');

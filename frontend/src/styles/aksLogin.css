@@ -156,6 +156,13 @@
   padding: 0.5% 2%;
   box-sizing: border-box;
   pointer-events: auto;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.aks-right-page-zone::-webkit-scrollbar {
+  display: none;
 }
 
 /* Subtle badge when toggled to Sign Up mode */

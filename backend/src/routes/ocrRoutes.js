@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { requireAuth } from '../middleware/auth.js';
 import { validateCsrf } from '../middleware/csrf.js';
+import { ocrDispatchRateLimiter } from '../middleware/rateLimiter.js';
 import {
   getOcrHealth,
   getOcrJob,
@@ -20,7 +21,7 @@ router.use(requireAuth);
 router.use('/library', libraryIndexingRoutes);
 
 router.get('/jobs/:jobId', getOcrJob);
-router.post('/jobs/:jobId/cancel', validateCsrf, cancelOcrJob);
+router.post('/jobs/:jobId/cancel', ocrDispatchRateLimiter, validateCsrf, cancelOcrJob);
 
 export default router;
 

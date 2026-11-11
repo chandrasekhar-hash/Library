@@ -19,12 +19,18 @@ export function configureSecurityHeaders() {
 }
 
 export function configureCors() {
-  const allowedOrigins = [env.FRONTEND_URL, 'http://localhost:5173', 'http://127.0.0.1:5173'];
+  const defaultLocalOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+  const configuredOrigins = env.ALLOWED_ORIGINS || [env.FRONTEND_URL.replace(/\/$/, '')];
+  const allowedOrigins = Array.from(new Set([...configuredOrigins, ...defaultLocalOrigins]));
 
   return cors({
     origin: (origin, callback) => {
       // Allow requests with no origin (such as mobile apps, curl, or same-origin)
-      if (!origin || allowedOrigins.includes(origin)) {
+      if (!origin) {
+        return callback(null, true);
+      }
+      const normalizedOrigin = origin.replace(/\/$/, '');
+      if (allowedOrigins.includes(normalizedOrigin)) {
         callback(null, true);
       } else {
         callback(new Error(`Origin ${origin} not permitted by Aks CORS policy.`));

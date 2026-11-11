@@ -4,6 +4,9 @@ import crypto from 'crypto';
 import { PDFDocument } from 'pdf-lib';
 import { storagePaths } from '../config/storage.js';
 import { env } from '../config/env.js';
+import { storageAdapter } from './storage/storageAdapter.js';
+
+export { storageAdapter };
 
 /**
  * Storage Service for Aks (अक्स) Private File Storage.
@@ -50,12 +53,16 @@ export function resolveSafeStoragePath(relativePath) {
     throw new Error('Storage path must be a non-empty string.');
   }
 
-  const normalized = path.normalize(relativePath).replace(/^(\.\.(\/|\\|$))+/, '');
-  const absolutePath = path.resolve(storagePaths.root, normalized);
+  // If path is a Cloudflare R2 URI, return directly without local path resolution
+  if (relativePath.startsWith('r2://')) {
+    return relativePath;
+  }
 
   const rootPrefix = storagePaths.root.endsWith(path.sep)
     ? storagePaths.root
     : storagePaths.root + path.sep;
+
+  const absolutePath = path.resolve(storagePaths.root, relativePath);
 
   if (!absolutePath.startsWith(rootPrefix) && absolutePath !== storagePaths.root) {
     throw new Error('Access denied: Path traversal detected.');
@@ -267,52 +274,34 @@ export async function validatePdfStructure(filePath) {
 }
 
 /**
- * Moves a validated temporary file into permanent private storage for a user.
+ * Moves/uploads a validated temporary file into permanent private storage for a user.
+ * Supports both Local filesystem and Cloudflare R2 via storageAdapter.
  *
  * @param {string} tempFilePath
  * @param {string} userId
- * @returns {Promise<{ storagePath: string, fullPath: string }>}
+ * @returns {Promise<{ storagePath: string, fullPath: string | null }>}
  */
 export async function moveToPermanentStorage(tempFilePath, userId) {
-  const userDir = path.join(storagePaths.pdfs, userId);
-  if (!fs.existsSync(userDir)) {
-    await fs.promises.mkdir(userDir, { recursive: true, mode: 0o700 });
-  }
-  try {
-    await fs.promises.chmod(userDir, 0o700);
-  } catch {
-    // ignore
-  }
-
-  const fileId = crypto.randomUUID();
-  const relativePath = path.join('pdfs', userId, `${fileId}.pdf`);
-  const destinationPath = path.join(storagePaths.root, relativePath);
-
-  await fs.promises.rename(tempFilePath, destinationPath);
-  try {
-    await fs.promises.chmod(destinationPath, 0o600);
-  } catch {
-    // ignore
-  }
+  const result = await storageAdapter.savePermanentFile(tempFilePath, 'pdfs', userId, 'pdf', 'application/pdf');
+  const fullPath = storageAdapter.isR2(result.storagePath)
+    ? null
+    : resolveSafeStoragePath(result.storagePath);
 
   return {
-    storagePath: relativePath,
-    fullPath: destinationPath,
+    storagePath: result.storagePath,
+    fullPath,
   };
 }
 
 /**
- * Safely removes a file from storage.
+ * Safely removes a file from storage (Local or Cloudflare R2).
  *
  * @param {string} relativePath
  */
 export async function deleteStoredFile(relativePath) {
   if (!relativePath) return;
   try {
-    const fullPath = resolveSafeStoragePath(relativePath);
-    if (fs.existsSync(fullPath)) {
-      await fs.promises.unlink(fullPath);
-    }
+    await storageAdapter.deleteStoredFile(relativePath);
   } catch (err) {
     console.error(`[StorageService] Failed to delete file at ${relativePath}:`, err.message);
   }

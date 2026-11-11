@@ -12,3 +12,4 @@ DO $$
 BEGIN
   RAISE NOTICE 'Extensions initialized successfully: uuid-ossp and pg_trgm';
 END $$;
+

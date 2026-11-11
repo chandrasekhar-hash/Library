@@ -1275,6 +1275,117 @@
   margin: 0;
 }
 
+.settings-recovery-mobile-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.settings-recovery-mobile-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8125rem;
+  color: var(--text-secondary, #9DAEC5);
+}
+
+.settings-recovery-label {
+  color: var(--text-muted, #7B8BA6);
+}
+
+.settings-recovery-val {
+  color: var(--text-ivory, #F4E9D7);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.settings-recovery-badge {
+  font-size: 0.6875rem;
+  padding: 1px 7px;
+  background: rgba(103, 184, 162, 0.16);
+  border: 1px solid rgba(103, 184, 162, 0.35);
+  color: #67B8A2;
+  border-radius: 9999px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.settings-recovery-edit-btn {
+  background: none;
+  border: none;
+  color: var(--accent-gold, #E7C18A);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+  transition: color 140ms ease;
+}
+
+.settings-recovery-edit-btn:hover {
+  color: #FFF;
+}
+
+.settings-recovery-form {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.settings-recovery-input {
+  background: rgba(11, 19, 34, 0.8);
+  border: 1px solid rgba(231, 193, 138, 0.35);
+  border-radius: var(--radius-sm, 6px);
+  padding: 0.35rem 0.65rem;
+  font-size: 0.8125rem;
+  color: var(--text-ivory, #F4E9D7);
+  outline: none;
+  width: 170px;
+}
+
+.settings-recovery-input:focus {
+  border-color: var(--accent-gold, #E7C18A);
+  box-shadow: 0 0 0 2px rgba(231, 193, 138, 0.2);
+}
+
+.settings-recovery-save-btn {
+  background: var(--accent-gold, #E7C18A);
+  color: #1A1207;
+  border: none;
+  border-radius: var(--radius-sm, 6px);
+  padding: 0.35rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 140ms ease;
+}
+
+.settings-recovery-save-btn:hover {
+  opacity: 0.9;
+}
+
+.settings-recovery-cancel-btn {
+  background: transparent;
+  color: var(--text-muted, #7B8BA6);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: var(--radius-sm, 6px);
+  padding: 0.35rem 0.65rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.settings-recovery-error {
+  width: 100%;
+  font-size: 0.75rem;
+  color: #F87171;
+  margin-top: 0.2rem;
+}
+
 .settings-logout-btn {
   display: inline-flex;
   align-items: center;

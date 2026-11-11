@@ -1,7 +1,10 @@
 import fs from 'fs';
 import busboy from 'busboy';
 import { prisma } from '../services/prisma.js';
+import { env } from '../config/env.js';
 import { OcrJobService } from '../services/ocrJobService.js';
+import { QuotaService } from '../services/quotaService.js';
+import { withUserLock } from '../utils/userLock.js';
 import {
   sanitizeFilename,
   resolveSafeStoragePath,
@@ -9,6 +12,7 @@ import {
   validatePdfStructure,
   moveToPermanentStorage,
   deleteStoredFile,
+  storageAdapter,
 } from '../services/storageService.js';
 
 /**
@@ -63,6 +67,17 @@ export async function uploadBookFile(req, res, next) {
       error: {
         message: 'Invalid request content type. Expected multipart/form-data.',
         code: 'INVALID_CONTENT_TYPE',
+      },
+    });
+  }
+
+  // Early check on Content-Length header if provided (fast-fail before streaming)
+  const declaredContentLength = parseInt(req.headers['content-length'] || '0', 10);
+  if (declaredContentLength > env.MAX_UPLOAD_SIZE_MB * 1024 * 1024) {
+    return res.status(413).json({
+      error: {
+        message: `File exceeds maximum permitted size of ${env.MAX_UPLOAD_SIZE_MB} MB.`,
+        code: 'FILE_TOO_LARGE',
       },
     });
   }
@@ -161,59 +176,73 @@ export async function uploadBookFile(req, res, next) {
         // 3. Validate structural integrity of completed PDF before permanent placement
         await validatePdfStructure(tempFilePath);
 
-        // 4. Safely move to permanent storage and update DB inside per-book serialization lock
+        // 4. Safely move to permanent storage and update DB inside per-book and per-user serialization locks
+        // utilizing PostgreSQL transaction row-level locking for multi-instance distributed safety
         const bookFile = await withBookLock(book.id, async () => {
-          // Re-verify that the book still exists before proceeding with promotion
-          const currentBook = await prisma.book.findFirst({
-            where: { id: book.id, userId },
+          return await withUserLock(userId, async () => {
+            return await QuotaService.withUserRowLock(userId, async (tx) => {
+              // Re-verify that the book still exists before proceeding with promotion
+              const currentBook = await tx.book.findFirst({
+                where: { id: book.id, userId },
+              });
+              if (!currentBook) {
+                const err = new Error('Book not found or access denied.');
+                err.statusCode = 404;
+                err.code = 'BOOK_NOT_FOUND';
+                throw err;
+              }
+
+              // Query latest BookFile to avoid race conditions during concurrent replacements
+              const currentBookFile = await tx.bookFile.findUnique({
+                where: { bookId: book.id },
+              });
+              const oldStoragePath = currentBookFile?.storagePath || null;
+              const oldSizeBytes = currentBookFile ? Number(currentBookFile.fileSizeBytes) : 0;
+
+              // Enforce account storage quota against trusted server-measured bytesWritten within locked tx
+              await QuotaService.assertQuotaAvailable(userId, bytesWritten, {
+                replacingBytes: oldSizeBytes,
+                client: tx,
+              });
+
+              // Move validated temp file to user's permanent private storage
+              const moveRes = await moveToPermanentStorage(tempFilePath, userId);
+              newStoragePath = moveRes.storagePath;
+
+              // Safely update BookFile record in PostgreSQL
+              const record = await tx.bookFile.upsert({
+                where: {
+                  bookId: book.id,
+                },
+                update: {
+                  storagePath: newStoragePath,
+                  filename: originalFilename,
+                  fileSizeBytes: BigInt(bytesWritten),
+                  fileSha256: sha256,
+                  mimeType: 'application/pdf',
+                },
+                create: {
+                  bookId: book.id,
+                  userId,
+                  storagePath: newStoragePath,
+                  filename: originalFilename,
+                  fileSizeBytes: BigInt(bytesWritten),
+                  fileSha256: sha256,
+                  mimeType: 'application/pdf',
+                },
+              });
+
+              return { record, oldStoragePath };
+            });
           });
-          if (!currentBook) {
-            const err = new Error('Book not found or access denied.');
-            err.statusCode = 404;
-            err.code = 'BOOK_NOT_FOUND';
-            throw err;
-          }
-
-          // Query latest BookFile to avoid race conditions during concurrent replacements
-          const currentBookFile = await prisma.bookFile.findUnique({
-            where: { bookId: book.id },
-          });
-          const oldStoragePath = currentBookFile?.storagePath || null;
-
-          // Move validated temp file to user's permanent private storage
-          const moveRes = await moveToPermanentStorage(tempFilePath, userId);
-          newStoragePath = moveRes.storagePath;
-
-          // Safely update BookFile record in PostgreSQL
-          const record = await prisma.bookFile.upsert({
-            where: {
-              bookId: book.id,
-            },
-            update: {
-              storagePath: newStoragePath,
-              filename: originalFilename,
-              fileSizeBytes: BigInt(bytesWritten),
-              fileSha256: sha256,
-              mimeType: 'application/pdf',
-            },
-            create: {
-              bookId: book.id,
-              userId,
-              storagePath: newStoragePath,
-              filename: originalFilename,
-              fileSizeBytes: BigInt(bytesWritten),
-              fileSha256: sha256,
-              mimeType: 'application/pdf',
-            },
-          });
-
-          // Post-commit cleanup: remove obsolete physical file safely
-          if (oldStoragePath && oldStoragePath !== newStoragePath) {
-            await deleteStoredFile(oldStoragePath);
-          }
-
-          return record;
         });
+
+        const finalRecord = bookFile.record;
+
+        // Post-commit cleanup: remove obsolete physical file safely
+        if (bookFile.oldStoragePath && bookFile.oldStoragePath !== newStoragePath) {
+          await deleteStoredFile(bookFile.oldStoragePath);
+        }
 
         // 5. Automatically enqueue background indexing for the uploaded book
         let indexingInfo = { enqueued: false };
@@ -240,14 +269,14 @@ export async function uploadBookFile(req, res, next) {
         return res.status(200).json({
           message: 'PDF file uploaded and attached successfully.',
           file: {
-            id: bookFile.id,
-            bookId: bookFile.bookId,
-            filename: bookFile.filename,
-            mimeType: bookFile.mimeType,
-            fileSizeBytes: Number(bookFile.fileSizeBytes),
-            fileSha256: bookFile.fileSha256,
-            createdAt: bookFile.createdAt,
-            updatedAt: bookFile.updatedAt,
+            id: finalRecord.id,
+            bookId: finalRecord.bookId,
+            filename: finalRecord.filename,
+            mimeType: finalRecord.mimeType,
+            fileSizeBytes: Number(finalRecord.fileSizeBytes),
+            fileSha256: finalRecord.fileSha256,
+            createdAt: finalRecord.createdAt,
+            updatedAt: finalRecord.updatedAt,
           },
           indexing: indexingInfo,
         });
@@ -295,7 +324,7 @@ export async function uploadBookFile(req, res, next) {
  */
 export async function streamBookFile(req, res, next) {
   const { bookId } = req.params;
-  const userId = req.userId;
+  const userId = req.resourceUserId || req.userId;
 
   if (!bookId) {
     return res.status(400).json({
@@ -336,101 +365,12 @@ export async function streamBookFile(req, res, next) {
       });
     }
 
-    // 2. Resolve safe absolute file path
-    const filePath = resolveSafeStoragePath(book.file.storagePath);
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({
-        error: {
-          message: 'Stored PDF file could not be found on disk.',
-          code: 'STORAGE_FILE_MISSING',
-        },
-      });
-    }
-
-    const stat = await fs.promises.stat(filePath);
-    const totalSize = stat.size;
-
-    // 3. Handle HTTP Range Requests (Essential for PDF.js streaming)
-    const rangeHeader = req.headers.range;
-
-    if (rangeHeader) {
-      const match = rangeHeader.match(/^bytes=(\d*)-(\d*)$/);
-
-      if (!match) {
-        res.setHeader('Content-Range', `bytes */${totalSize}`);
-        return res.status(416).json({
-          error: {
-            message: 'Requested Range Not Satisfiable.',
-            code: 'RANGE_NOT_SATISFIABLE',
-          },
-        });
-      }
-
-      let start = match[1] ? parseInt(match[1], 10) : undefined;
-      let end = match[2] ? parseInt(match[2], 10) : undefined;
-
-      // Handle suffix byte range: "bytes=-500" (last 500 bytes)
-      if (start === undefined && end !== undefined) {
-        start = Math.max(0, totalSize - end);
-        end = totalSize - 1;
-      } else if (start !== undefined && end === undefined) {
-        end = totalSize - 1;
-      }
-
-      // Check range validity
-      if (start === undefined || end === undefined || start >= totalSize || start > end) {
-        res.setHeader('Content-Range', `bytes */${totalSize}`);
-        return res.status(416).json({
-          error: {
-            message: 'Requested Range Not Satisfiable.',
-            code: 'RANGE_NOT_SATISFIABLE',
-          },
-        });
-      }
-
-      // Clamp end boundary to EOF
-      if (end >= totalSize) {
-        end = totalSize - 1;
-      }
-
-      const chunkSize = end - start + 1;
-
-      res.status(206);
-      res.setHeader('Content-Range', `bytes ${start}-${end}/${totalSize}`);
-      res.setHeader('Accept-Ranges', 'bytes');
-      res.setHeader('Content-Length', chunkSize);
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(book.file.filename)}"`);
-
-      const fileStream = fs.createReadStream(filePath, { start, end });
-
-      fileStream.on('error', (err) => {
-        console.error('[StreamError] Error streaming range:', err.message);
-        if (!res.headersSent) {
-          next(err);
-        }
-      });
-
-      fileStream.pipe(res);
-    } else {
-      // 4. Normal Full-File Request (200 OK)
-      res.status(200);
-      res.setHeader('Content-Type', 'application/pdf');
-      res.setHeader('Content-Length', totalSize);
-      res.setHeader('Accept-Ranges', 'bytes');
-      res.setHeader('Content-Disposition', `inline; filename="${encodeURIComponent(book.file.filename)}"`);
-
-      const fileStream = fs.createReadStream(filePath);
-
-      fileStream.on('error', (err) => {
-        console.error('[StreamError] Error streaming full file:', err.message);
-        if (!res.headersSent) {
-          next(err);
-        }
-      });
-
-      fileStream.pipe(res);
-    }
+    // 2. Stream using storage adapter (supports Local and Cloudflare R2 with RFC 7233 byte-range support)
+    return storageAdapter.streamRangeResponse(req, res, next, {
+      storagePath: book.file.storagePath,
+      filename: book.file.filename,
+      mimeType: book.file.mimeType || 'application/pdf',
+    });
   } catch (err) {
     next(err);
   }

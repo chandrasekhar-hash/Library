@@ -4,9 +4,12 @@ import crypto from 'crypto';
 import busboy from 'busboy';
 import { prisma } from '../services/prisma.js';
 import { storagePaths } from '../config/storage.js';
-import { resolveSafeStoragePath, deleteStoredFile } from '../services/storageService.js';
+import { resolveSafeStoragePath, deleteStoredFile, storageAdapter } from '../services/storageService.js';
 import { sanitizeBook } from './bookController.js';
 import { isValidUuid } from '../utils/validators.js';
+import { QuotaService } from '../services/quotaService.js';
+import { withUserLock } from '../utils/userLock.js';
+import { env } from '../config/env.js';
 
 const MAX_COVER_SIZE_BYTES = 5 * 1024 * 1024; // 5 MB limit for cover thumbnail
 
@@ -277,78 +280,79 @@ export async function uploadBookCover(req, res, next) {
         const uploadResult = await filePromise;
         tempFilePath = uploadResult.tempFilePath;
 
-        // Ensure user cover storage directory exists
-        const userCoverDir = path.join(storagePaths.covers, userId);
-        if (!fs.existsSync(userCoverDir)) {
-          fs.mkdirSync(userCoverDir, { recursive: true, mode: 0o700 });
-        }
-        try {
-          fs.chmodSync(userCoverDir, 0o700);
-        } catch (_) {}
-
         // Target filename: e.g. {bookId}_{type}.jpg
         const filename = `${bookId}_${coverType}.${uploadResult.ext}`;
-        const relativeStoragePath = path.join('covers', userId, filename);
-        const permanentFilePath = resolveSafeStoragePath(relativeStoragePath);
+        const relativeStorageKey = path.posix.join('covers', userId, filename);
 
-        // Safely move from temp to permanent
-        fs.copyFileSync(tempFilePath, permanentFilePath);
-        try {
-          fs.chmodSync(permanentFilePath, 0o600);
-        } catch (_) {}
-        try {
-          fs.unlinkSync(tempFilePath);
-        } catch (_) {}
+        const updatedBook = await withUserLock(userId, async () => {
+          const currentScheme = (typeof book.colorScheme === 'object' && book.colorScheme) || {};
+          const isCustom = coverType === 'custom';
+          const replacingBytes = isCustom
+            ? Number(currentScheme.customCoverSizeBytes || 0)
+            : Number(currentScheme.defaultCoverSizeBytes || 0);
 
-        // Update book colorScheme with cover metadata
-        const currentScheme = (typeof book.colorScheme === 'object' && book.colorScheme) || {};
-        const isCustom = coverType === 'custom';
-        const updatedScheme = {
-          ...currentScheme,
-          hasCustomCover: isCustom ? true : currentScheme.hasCustomCover || false,
-          customCoverPage: isCustom
-            ? targetPage || currentScheme.customCoverPage || 1
-            : currentScheme.customCoverPage || null,
-          defaultCoverPage: !isCustom
-            ? targetPage || currentScheme.defaultCoverPage || 1
-            : currentScheme.defaultCoverPage || 1,
-          coverExt: uploadResult.ext,
-          coverPlacement: targetPlacement || currentScheme.coverPlacement || 'right',
-          coverUpdatedAt: Date.now(),
-        };
+          // Assert storage quota with deduction for replaced cover
+          await QuotaService.assertQuotaAvailable(userId, uploadResult.bytesWritten, { replacingBytes });
 
-        const updatedBook = await prisma.book.update({
-          where: { id_userId: { id: bookId, userId } },
-          data: { colorScheme: updatedScheme },
-          include: {
-            file: {
-              select: {
-                id: true,
-                filename: true,
-                mimeType: true,
-                fileSizeBytes: true,
-                fileSha256: true,
-                createdAt: true,
-                updatedAt: true,
+          // Upload/move using active storage provider
+          await storageAdapter.getActiveUploadProvider().uploadFile(
+            tempFilePath,
+            relativeStorageKey,
+            uploadResult.mimeType
+          );
+
+          // Update book colorScheme with cover metadata and server-measured byte size
+          const updatedScheme = {
+            ...currentScheme,
+            hasCustomCover: isCustom ? true : currentScheme.hasCustomCover || false,
+            customCoverPage: isCustom
+              ? targetPage || currentScheme.customCoverPage || 1
+              : currentScheme.customCoverPage || null,
+            defaultCoverPage: !isCustom
+              ? targetPage || currentScheme.defaultCoverPage || 1
+              : currentScheme.defaultCoverPage || 1,
+            coverExt: uploadResult.ext,
+            coverPlacement: targetPlacement || currentScheme.coverPlacement || 'right',
+            coverUpdatedAt: Date.now(),
+            ...(isCustom
+              ? { customCoverSizeBytes: uploadResult.bytesWritten }
+              : { defaultCoverSizeBytes: uploadResult.bytesWritten }),
+          };
+
+          return await prisma.book.update({
+            where: { id_userId: { id: bookId, userId } },
+            data: { colorScheme: updatedScheme },
+            include: {
+              file: {
+                select: {
+                  id: true,
+                  filename: true,
+                  mimeType: true,
+                  fileSizeBytes: true,
+                  fileSha256: true,
+                  createdAt: true,
+                  updatedAt: true,
+                },
+              },
+              readingProgress: {
+                select: {
+                  currentPage: true,
+                  progressPercent: true,
+                  lastOpenedAt: true,
+                },
+              },
+              _count: {
+                select: {
+                  bookmarks: true,
+                  notes: true,
+                  highlights: true,
+                },
               },
             },
-            readingProgress: {
-              select: {
-                currentPage: true,
-                progressPercent: true,
-                lastOpenedAt: true,
-              },
-            },
-            _count: {
-              select: {
-                bookmarks: true,
-                notes: true,
-                highlights: true,
-              },
-            },
-          },
+          });
         });
 
+        const isCustom = coverType === 'custom';
         return res.status(200).json({
           message: `${isCustom ? 'Custom' : 'Default'} cover updated successfully.`,
           book: sanitizeBook(updatedBook),
@@ -380,7 +384,7 @@ export async function uploadBookCover(req, res, next) {
  */
 export async function streamBookCover(req, res, next) {
   const { bookId } = req.params;
-  const userId = req.userId;
+  const userId = req.resourceUserId || req.userId;
 
   if (!isValidUuid(bookId)) {
     return res.status(400).json({
@@ -425,23 +429,26 @@ export async function streamBookCover(req, res, next) {
     const extensions = ['jpg', 'webp', 'png'];
     let matchedFilePath = null;
     let matchedExt = 'jpg';
+    let matchedStoragePath = null;
 
     for (const type of targetCoverTypes) {
       for (const ext of extensions) {
-        const candidateRelative = path.join('covers', userId, `${bookId}_${type}.${ext}`);
-        try {
-          const candidateAbs = resolveSafeStoragePath(candidateRelative);
-          if (fs.existsSync(candidateAbs)) {
-            matchedFilePath = candidateAbs;
-            matchedExt = ext;
-            break;
-          }
-        } catch (_) {}
+        const candidateRelative = path.posix.join('covers', userId, `${bookId}_${type}.${ext}`);
+        // Check R2 first if running in R2, then check local
+        if (await storageAdapter.fileExists(`r2://${candidateRelative}`)) {
+          matchedStoragePath = `r2://${candidateRelative}`;
+          matchedExt = ext;
+          break;
+        } else if (await storageAdapter.fileExists(candidateRelative)) {
+          matchedStoragePath = candidateRelative;
+          matchedExt = ext;
+          break;
+        }
       }
-      if (matchedFilePath) break;
+      if (matchedStoragePath) break;
     }
 
-    if (!matchedFilePath) {
+    if (!matchedStoragePath) {
       return res.status(404).json({
         error: {
           message: 'No cover thumbnail found for this book.',
@@ -457,19 +464,19 @@ export async function streamBookCover(req, res, next) {
       webp: 'image/webp',
     };
     const mimeType = mimeMap[matchedExt] || 'image/jpeg';
-    const stat = await fs.promises.stat(matchedFilePath);
+    const meta = await storageAdapter.getMetadata(matchedStoragePath);
 
     res.setHeader('Content-Type', mimeType);
-    res.setHeader('Content-Length', stat.size);
+    res.setHeader('Content-Length', meta.sizeBytes);
     res.setHeader('Cache-Control', 'private, max-age=86400');
-    res.setHeader('ETag', `"${stat.mtimeMs.toString(16)}-${stat.size.toString(16)}"`);
+    res.setHeader('ETag', `"${meta.sizeBytes.toString(16)}"`);
 
     // Handle 304 Not Modified
-    if (req.headers['if-none-match'] === `"${stat.mtimeMs.toString(16)}-${stat.size.toString(16)}"`) {
+    if (req.headers['if-none-match'] === `"${meta.sizeBytes.toString(16)}"`) {
       return res.status(304).end();
     }
 
-    const readStream = fs.createReadStream(matchedFilePath);
+    const readStream = await storageAdapter.getStream(matchedStoragePath);
     readStream.pipe(res);
   } catch (err) {
     next(err);
@@ -508,53 +515,56 @@ export async function resetBookCover(req, res, next) {
       });
     }
 
-    const currentScheme = (typeof book.colorScheme === 'object' && book.colorScheme) || {};
-    const updatedScheme = {
-      ...currentScheme,
-      hasCustomCover: false,
-      customCoverPage: null,
-      coverUpdatedAt: Date.now(),
-    };
+    const updatedBook = await withUserLock(userId, async () => {
+      const currentScheme = (typeof book.colorScheme === 'object' && book.colorScheme) || {};
+      const updatedScheme = {
+        ...currentScheme,
+        hasCustomCover: false,
+        customCoverPage: null,
+        customCoverSizeBytes: 0,
+        coverUpdatedAt: Date.now(),
+      };
 
-    // Delete custom cover file from disk
-    const extensions = ['jpg', 'webp', 'png'];
-    for (const ext of extensions) {
-      try {
-        const customRel = path.join('covers', userId, `${bookId}_custom.${ext}`);
-        await deleteStoredFile(customRel);
-      } catch (_) {}
-    }
+      // Delete custom cover file from disk
+      const extensions = ['jpg', 'webp', 'png'];
+      for (const ext of extensions) {
+        try {
+          const customRel = path.join('covers', userId, `${bookId}_custom.${ext}`);
+          await deleteStoredFile(customRel);
+        } catch (_) {}
+      }
 
-    const updatedBook = await prisma.book.update({
-      where: { id_userId: { id: bookId, userId } },
-      data: { colorScheme: updatedScheme },
-      include: {
-        file: {
-          select: {
-            id: true,
-            filename: true,
-            mimeType: true,
-            fileSizeBytes: true,
-            fileSha256: true,
-            createdAt: true,
-            updatedAt: true,
+      return await prisma.book.update({
+        where: { id_userId: { id: bookId, userId } },
+        data: { colorScheme: updatedScheme },
+        include: {
+          file: {
+            select: {
+              id: true,
+              filename: true,
+              mimeType: true,
+              fileSizeBytes: true,
+              fileSha256: true,
+              createdAt: true,
+              updatedAt: true,
+            },
+          },
+          readingProgress: {
+            select: {
+              currentPage: true,
+              progressPercent: true,
+              lastOpenedAt: true,
+            },
+          },
+          _count: {
+            select: {
+              bookmarks: true,
+              notes: true,
+              highlights: true,
+            },
           },
         },
-        readingProgress: {
-          select: {
-            currentPage: true,
-            progressPercent: true,
-            lastOpenedAt: true,
-          },
-        },
-        _count: {
-          select: {
-            bookmarks: true,
-            notes: true,
-            highlights: true,
-          },
-        },
-      },
+      });
     });
 
     return res.status(200).json({

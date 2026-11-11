@@ -15,6 +15,8 @@ import assetRoutes from './routes/assetRoutes.js';
 import statisticsRoutes from './routes/statisticsRoutes.js';
 import ocrRoutes from './routes/ocrRoutes.js';
 import libraryIndexingRoutes from './routes/libraryIndexingRoutes.js';
+import accountRelationshipRoutes from './routes/accountRelationshipRoutes.js';
+import ownerAccessRoutes from './routes/ownerAccessRoutes.js';
 import { env } from './config/env.js';
 
 const app = express();
@@ -54,6 +56,8 @@ app.use('/api/assets', assetRoutes);
 app.use('/api/statistics', statisticsRoutes);
 app.use('/api/ocr', ocrRoutes);
 app.use('/api/library/indexing', libraryIndexingRoutes);
+app.use('/api/account/relationships', accountRelationshipRoutes);
+app.use('/api/account/owner-access', ownerAccessRoutes);
 
 
 // Fallthrough 404 handler

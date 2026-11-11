@@ -435,7 +435,7 @@ async function verifyReferencedAssets(userId, updates) {
  */
 export async function getGlobalPreferences(req, res, next) {
   try {
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
 
     const preference = await prisma.userPreference.findUnique({
       where: { userId },
@@ -536,7 +536,7 @@ export async function updateGlobalPreferences(req, res, next) {
 export async function getBookPreferences(req, res, next) {
   try {
     const { bookId } = req.params;
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
 
     if (!isValidUuid(bookId)) {
       return res.status(400).json({

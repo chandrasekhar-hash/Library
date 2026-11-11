@@ -19,6 +19,7 @@
     "prisma:migrate": "npm run prisma:migrate --prefix backend",
     "prisma:migrate:deploy": "npm run prisma:migrate:deploy --prefix backend",
     "prisma:studio": "npm run prisma:studio --prefix backend",
+    "bootstrap:owner": "node backend/src/scripts/bootstrapOwner.js",
     "install:all": "npm install --prefix backend && npm install --prefix frontend"
   }
 }

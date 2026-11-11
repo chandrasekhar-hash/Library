@@ -63,7 +63,7 @@ export function onDataChanged(callback) {
   return () => dataChangeListeners.delete(callback);
 }
 
-function notifyDataChanged(entityType, payload) {
+export function notifyDataChanged(entityType, payload) {
   dataChangeListeners.forEach((fn) => {
     try {
       fn(entityType, payload);

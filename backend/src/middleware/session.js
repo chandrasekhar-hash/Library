@@ -7,9 +7,10 @@ import { sessionStore } from '../services/sessionStore.js';
  */
 export const sessionCookieOptions = {
   httpOnly: true,
-  sameSite: 'lax',
-  secure: env.IS_PRODUCTION,
+  sameSite: env.COOKIE_SAME_SITE || 'lax',
+  secure: env.COOKIE_SECURE,
   path: '/',
+  ...(env.COOKIE_DOMAIN ? { domain: env.COOKIE_DOMAIN } : {}),
 };
 
 /**
@@ -21,6 +22,7 @@ export const sessionMiddleware = session({
   store: sessionStore,
   resave: false,
   saveUninitialized: false,
+  proxy: env.TRUST_PROXY !== false && env.TRUST_PROXY !== undefined,
   cookie: {
     ...sessionCookieOptions,
     // By default, sessions are browser-session cookies unless Remember Me is explicitly requested

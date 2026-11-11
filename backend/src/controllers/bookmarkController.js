@@ -167,7 +167,7 @@ export async function createBookmark(req, res, next) {
 export async function listBookmarks(req, res, next) {
   try {
     const { bookId } = req.params;
-    const userId = req.userId;
+    const userId = req.resourceUserId || req.userId;
 
     if (!isValidUuid(bookId)) {
       return res.status(400).json({

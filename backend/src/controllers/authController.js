@@ -1,12 +1,20 @@
 import crypto from 'crypto';
-import { registerUser, authenticateCredentials } from '../services/authService.js';
+import {
+  registerUser,
+  authenticateCredentials,
+  verifyRecoveryCredentials,
+  resetPasswordWithToken,
+  updateUserProfile,
+} from '../services/authService.js';
 import { sessionCookieOptions } from '../middleware/session.js';
 import { getOrCreateCsrfToken } from '../middleware/csrf.js';
 import { env } from '../config/env.js';
 import { prisma } from '../services/prisma.js';
 import { hashPassword } from '../services/passwordService.js';
-import { normalizeEmail } from '../utils/validators.js';
+import { normalizeEmail, maskMobileNumber } from '../utils/validators.js';
 import { DEFAULT_USER_PREFERENCES } from '../config/preferences.js';
+import { QuotaService } from '../services/quotaService.js';
+import { invalidateSessionAccess } from '../services/ownerAccessService.js';
 
 /**
  * Controller for Aks (अक्स) Authentication.
@@ -32,17 +40,57 @@ export async function getCsrfToken(req, res, next) {
 
 /**
  * POST /api/auth/register
- * Register a new user account.
+ * Register a new user account with strict USER role, hash password with Argon2id,
+ * and automatically establish an authenticated session for immediate sanctuary access.
  */
 export async function register(req, res, next) {
   try {
-    const { name, email, password } = req.body || {};
-    const { user } = await registerUser({ name, email, password });
+    const { name, email, password, mobileNumber, rememberMe } = req.body || {};
+    const { user } = await registerUser({ name, email, password, mobileNumber });
 
-    res.status(201).json({
-      message: 'Account registered successfully.',
-      user,
-    });
+    const safeUser = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      hasMobileNumber: Boolean(user.mobileNumber),
+      mobileNumberMasked: maskMobileNumber(user.mobileNumber),
+      createdAt: user.createdAt,
+    };
+
+    // Establish authenticated session for the newly registered user
+    if (req.session) {
+      req.session.userId = user.id;
+
+      if (rememberMe === true) {
+        req.session.cookie.maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days
+      } else {
+        req.session.cookie.expires = false;
+        req.session.cookie.maxAge = undefined;
+      }
+
+      req.session.save((saveErr) => {
+        if (saveErr) {
+          console.error('[AuthController] Error saving session post-registration:', saveErr);
+          return res.status(201).json({
+            message: 'Account registered successfully. Please log in to continue.',
+            user: safeUser,
+            requiresLogin: true,
+          });
+        }
+
+        res.status(201).json({
+          message: 'Account registered successfully.',
+          user: safeUser,
+          csrfToken: req.session.csrfToken,
+        });
+      });
+    } else {
+      res.status(201).json({
+        message: 'Account registered successfully.',
+        user: safeUser,
+      });
+    }
   } catch (err) {
     next(err);
   }
@@ -65,6 +113,16 @@ export async function login(req, res, next) {
         },
       });
     }
+
+    const safeUser = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      hasMobileNumber: Boolean(user.mobileNumber),
+      mobileNumberMasked: maskMobileNumber(user.mobileNumber),
+      createdAt: user.createdAt,
+    };
 
     // Regenerate session ID to prevent session fixation attacks
     req.session.regenerate((err) => {
@@ -99,7 +157,7 @@ export async function login(req, res, next) {
 
         res.status(200).json({
           message: 'Login successful.',
-          user,
+          user: safeUser,
           csrfToken: freshCsrfToken,
         });
       });
@@ -145,6 +203,20 @@ export async function me(req, res) {
   res.status(200).json({
     user: req.user,
   });
+}
+
+/**
+ * GET /api/auth/storage
+ * Return current storage usage and quota breakdown for the authenticated user.
+ */
+export async function getStorageUsage(req, res, next) {
+  try {
+    const userId = req.userId;
+    const storage = await QuotaService.getUserStorageUsage(userId);
+    res.status(200).json({ storage });
+  } catch (err) {
+    next(err);
+  }
 }
 
 /**
@@ -323,4 +395,62 @@ export async function handleGoogleCallback(req, res, next) {
     res.redirect(`${env.FRONTEND_URL}/?auth_error=oauth_internal_error`);
   }
 }
+
+/**
+ * POST /api/auth/recovery/verify
+ * Verifies email and mobile number combination for password recovery.
+ * Generates an ephemeral single-use recovery authorization token upon success.
+ */
+export async function verifyRecovery(req, res, next) {
+  try {
+    const { email, mobileNumber } = req.body;
+    const { recoveryToken, expiresAt } = await verifyRecoveryCredentials({ email, mobileNumber });
+
+    res.status(200).json({
+      message: 'Recovery credentials verified successfully.',
+      recoveryToken,
+      expiresAt,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * POST /api/auth/recovery/reset
+ * Resets user password using a verified single-use recovery token.
+ * All active sessions for the user account are immediately revoked.
+ */
+export async function resetPassword(req, res, next) {
+  try {
+    const { recoveryToken, newPassword, confirmPassword } = req.body;
+    await resetPasswordWithToken({ recoveryToken, newPassword, confirmPassword });
+
+    res.status(200).json({
+      message: 'Password reset successfully. Please log in with your new password.',
+      success: true,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
+/**
+ * PATCH /api/auth/profile
+ * Updates authenticated user's profile details (e.g. mobile number).
+ */
+export async function updateProfile(req, res, next) {
+  try {
+    const { mobileNumber } = req.body;
+    const result = await updateUserProfile({ userId: req.userId, mobileNumber });
+
+    res.status(200).json({
+      message: 'Profile updated successfully.',
+      user: result.user,
+    });
+  } catch (err) {
+    next(err);
+  }
+}
+
 

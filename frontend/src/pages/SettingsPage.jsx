@@ -40,7 +40,13 @@ import {
   X,
   Sun,
   Moon,
+  Users,
+  Phone,
 } from 'lucide-react';
+
+import LinkedAccountsSettings from '../components/auth/LinkedAccountsSettings';
+import { authApi } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 import {
   loadPreferences,
@@ -125,6 +131,46 @@ export default function SettingsPage({
   const [confirmModal, setConfirmModal] = useState(null); // 'clear-all' | 'reset-book' | null
   const [allNotes, setAllNotes] = useState([]);
   const [uploadError, setUploadError] = useState(null);
+
+  // Recovery Mobile Number states
+  const { updateUser } = useAuth();
+  const [isEditingMobile, setIsEditingMobile] = useState(false);
+  const [mobileInput, setMobileInput] = useState('');
+  const [isSavingMobile, setIsSavingMobile] = useState(false);
+  const [mobileError, setMobileError] = useState(null);
+
+  const handleSaveMobile = async (e) => {
+    e.preventDefault();
+    const trimmed = mobileInput.trim();
+    if (!trimmed) {
+      setMobileError('Please enter a valid mobile number.');
+      return;
+    }
+    setIsSavingMobile(true);
+    setMobileError(null);
+    try {
+      const res = await authApi.updateProfile({ mobileNumber: trimmed });
+      if (res?.user && updateUser) {
+        updateUser(res.user);
+      }
+      setIsEditingMobile(false);
+      setMobileInput('');
+    } catch (err) {
+      setMobileError(err.message || 'Failed to update recovery mobile number.');
+    } finally {
+      setIsSavingMobile(false);
+    }
+  };
+
+  const categoriesList = useMemo(() => {
+    if (currentUser?.role === 'OWNER') {
+      return [
+        ...CATEGORIES,
+        { id: 'linked-accounts', label: 'Linked Accounts', icon: Users },
+      ];
+    }
+    return CATEGORIES;
+  }, [currentUser?.role]);
 
   // Background & Appearance controls
   const fileInputRef = useRef(null);
@@ -916,7 +962,7 @@ export default function SettingsPage({
 
       {/* ── 4. Mobile Category Selector Tabs ───────────────────────────────── */}
       <nav className="settings-mobile-tabs" aria-label="Settings Categories (Mobile)">
-        {CATEGORIES.map((cat) => {
+        {categoriesList.map((cat) => {
           const Icon = cat.icon;
           return (
             <button
@@ -937,7 +983,7 @@ export default function SettingsPage({
         <aside className="settings-nav-card" aria-label="Settings categories">
           <div className="settings-nav-header">Sanctuary Domains</div>
           <div className="settings-nav-list" role="tablist">
-            {CATEGORIES.map((cat) => {
+            {categoriesList.map((cat) => {
               const Icon = cat.icon;
               const isActive = activeCategory === cat.id;
               const categoryOverridden =
@@ -2592,6 +2638,9 @@ export default function SettingsPage({
               </div>
             </div>
           )}
+          {activeCategory === 'linked-accounts' && (
+            <LinkedAccountsSettings onNavigateTo={onNavigateTo} />
+          )}
         </main>
       </div>
 
@@ -2611,6 +2660,64 @@ export default function SettingsPage({
                   ? `${currentUser.email} · Active reading session`
                   : 'You are currently enjoying the reading sanctuary with full local persistence.'}
               </p>
+              {currentUser && (
+                <div className="settings-recovery-mobile-row">
+                  <div className="settings-recovery-mobile-info">
+                    <Phone size={13} className="text-gold" />
+                    <span className="settings-recovery-label">Recovery Mobile:</span>
+                    <span className="settings-recovery-val">
+                      {currentUser.mobileNumberMasked ||
+                        (currentUser.hasMobileNumber ? 'Registered' : 'Not registered')}
+                    </span>
+                    {currentUser.hasMobileNumber && (
+                      <span className="settings-recovery-badge">Recovery Enabled</span>
+                    )}
+                  </div>
+                  {!isEditingMobile && (
+                    <button
+                      type="button"
+                      className="settings-recovery-edit-btn"
+                      onClick={() => {
+                        setIsEditingMobile(true);
+                        setMobileInput('');
+                        setMobileError(null);
+                      }}
+                    >
+                      {currentUser.hasMobileNumber ? 'Update' : 'Add Number'}
+                    </button>
+                  )}
+                </div>
+              )}
+              {isEditingMobile && (
+                <form className="settings-recovery-form" onSubmit={handleSaveMobile}>
+                  <input
+                    type="tel"
+                    className="settings-recovery-input"
+                    placeholder="+91 98765 43210"
+                    value={mobileInput}
+                    onChange={(e) => setMobileInput(e.target.value)}
+                    autoFocus
+                  />
+                  <button
+                    type="submit"
+                    className="settings-recovery-save-btn"
+                    disabled={isSavingMobile}
+                  >
+                    {isSavingMobile ? 'Saving...' : 'Save'}
+                  </button>
+                  <button
+                    type="button"
+                    className="settings-recovery-cancel-btn"
+                    onClick={() => {
+                      setIsEditingMobile(false);
+                      setMobileError(null);
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  {mobileError && <span className="settings-recovery-error">{mobileError}</span>}
+                </form>
+              )}
             </div>
           </div>
 
